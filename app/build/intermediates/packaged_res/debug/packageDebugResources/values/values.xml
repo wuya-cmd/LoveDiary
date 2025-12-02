@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background">#F8F9FA</color>
+    <color name="black">#000000</color>
+    <color name="darkGray">#616161</color>
+    <color name="error">#B00020</color>
+    <color name="gray">#9E9E9E</color>
+    <color name="lightGray">#EEEEEE</color>
+    <color name="onBackground">#212121</color>
+    <color name="onError">#FFFFFF</color>
+    <color name="onPrimary">#FFFFFF</color>
+    <color name="onSecondary">#FFFFFF</color>
+    <color name="onSurface">#212121</color>
+    <color name="primary">#FF6B6B</color>
+    <color name="primaryVariant">#FF5252</color>
+    <color name="secondary">#4ECDC4</color>
+    <color name="secondaryVariant">#26A69A</color>
+    <color name="success">#4CAF50</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="warning">#FFC107</color>
+    <color name="white">#FFFFFF</color>
+    <string name="app_name">LoveDiary</string>
+    <string name="backup_failed">备份失败</string>
+    <string name="backup_loading">正在备份...</string>
+    <string name="backup_success">备份成功</string>
+    <string name="compression_quality">压缩质量</string>
+    <string name="compression_quality_high">高质量</string>
+    <string name="compression_quality_low">低质量</string>
+    <string name="compression_quality_medium">中质量</string>
+    <string name="compression_use_webp">使用WebP格式</string>
+    <string name="diary_add_button">添加日记</string>
+    <string name="diary_backup_export">导出日记</string>
+    <string name="diary_backup_import">导入日记</string>
+    <string name="diary_backup_title">备份与恢复</string>
+    <string name="diary_content_hint">写下你的心情...</string>
+    <string name="diary_delete_button">删除</string>
+    <string name="diary_edit_title">编辑日记</string>
+    <string name="diary_encrypted_content">🔐 这是一篇加密日记，需要验证身份后查看</string>
+    <string name="diary_list_title">我的日记</string>
+    <string name="diary_locked_content">🔒 这是一篇私密日记，需要验证身份后查看</string>
+    <string name="diary_logout_button">退出登录</string>
+    <string name="diary_privacy_encrypted">🔐 加密</string>
+    <string name="diary_privacy_level">隐私等级</string>
+    <string name="diary_privacy_private">🔒 私密</string>
+    <string name="diary_privacy_public">🌐 公开</string>
+    <string name="diary_save_button">保存</string>
+    <string name="diary_settings_auto_lock">自动锁定</string>
+    <string name="diary_settings_change_password">修改密码</string>
+    <string name="diary_settings_compression">图片压缩设置</string>
+    <string name="diary_settings_title">设置</string>
+    <string name="diary_unlock_button">解锁</string>
+    <string name="image_compress_loading">正在压缩图片...</string>
+    <string name="image_select_from_gallery">从相册选择</string>
+    <string name="image_take_photo">拍照</string>
+    <string name="import_failed">导入失败</string>
+    <string name="import_loading">正在导入...</string>
+    <string name="import_success">导入成功</string>
+    <string name="login_button">登录</string>
+    <string name="login_forgot_password">忘记密码？</string>
+    <string name="login_password_hint">请输入密码</string>
+    <string name="login_title">登录</string>
+    <string name="password_change_button">修改密码</string>
+    <string name="password_confirm_hint">请确认新密码</string>
+    <string name="password_new_hint">请输入新密码</string>
+    <string name="password_old_hint">请输入原密码</string>
+    <style name="Theme.LoveDiary" parent="android:Theme.Material.Light.NoActionBar">
+        
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primaryVariant</item>
+        <item name="android:colorAccent">@color/secondary</item>
+        
+        <item name="android:statusBarColor">@color/primaryVariant</item>
+        
+        <item name="android:windowBackground">@color/background</item>
+    </style>
+</resources>

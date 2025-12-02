@@ -1,0 +1,13 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.LoveDiary" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primaryVariant</item>
+        <item name="android:colorAccent">@color/secondary</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/primaryVariant</item>
+        <!-- Window background -->
+        <item name="android:windowBackground">@color/background</item>
+    </style>
+</resources>

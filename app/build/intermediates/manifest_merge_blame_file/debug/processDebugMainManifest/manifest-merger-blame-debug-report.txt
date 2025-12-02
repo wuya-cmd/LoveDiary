@@ -1,0 +1,189 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.example.lovediary"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+9        android:targetSdkVersion="35" />
+10
+11    <!-- 必要的权限 -->
+12    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+12-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:6:5-76
+12-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:6:22-73
+13    <uses-permission
+13-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:7:5-108
+14        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+14-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:7:22-78
+15        android:maxSdkVersion="32" />
+15-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:7:79-105
+16    <uses-permission
+16-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:8:5-107
+17        android:name="android.permission.READ_EXTERNAL_STORAGE"
+17-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:8:22-77
+18        android:maxSdkVersion="32" />
+18-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:8:78-104
+19    <uses-permission android:name="android.permission.CAMERA" />
+19-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:9:5-65
+19-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:9:22-62
+20    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+20-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:10:5-82
+20-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:10:22-79
+21    <uses-permission android:name="android.permission.INTERNET" />
+21-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:11:5-67
+21-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:11:22-64
+22
+23    <!-- 相机功能 -->
+24    <uses-feature
+24-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:14:5-85
+25        android:name="android.hardware.camera"
+25-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:14:19-57
+26        android:required="false" />
+26-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:14:58-82
+27    <uses-feature
+27-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:15:5-95
+28        android:name="android.hardware.camera.autofocus"
+28-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:15:19-67
+29        android:required="false" />
+29-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:15:68-92
+30
+31    <permission
+31-->[androidx.core:core:1.13.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\682c42b9e1fa55e94b79e2430a241684\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
+32        android:name="com.example.lovediary.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+32-->[androidx.core:core:1.13.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\682c42b9e1fa55e94b79e2430a241684\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
+33        android:protectionLevel="signature" />
+33-->[androidx.core:core:1.13.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\682c42b9e1fa55e94b79e2430a241684\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
+34
+35    <uses-permission android:name="com.example.lovediary.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+35-->[androidx.core:core:1.13.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\682c42b9e1fa55e94b79e2430a241684\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
+35-->[androidx.core:core:1.13.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\682c42b9e1fa55e94b79e2430a241684\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
+36
+37    <application
+37-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:17:5-34:19
+38        android:allowBackup="true"
+38-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:18:9-35
+39        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+39-->[androidx.core:core:1.13.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\682c42b9e1fa55e94b79e2430a241684\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
+40        android:debuggable="true"
+41        android:extractNativeLibs="false"
+42        android:icon="@android:drawable/ic_menu_save"
+42-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:19:9-54
+43        android:label="@string/app_name"
+43-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:20:9-41
+44        android:supportsRtl="true"
+44-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:21:9-35
+45        android:theme="@style/Theme.LoveDiary" >
+45-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:22:9-47
+46        <activity
+46-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:23:9-33:20
+47            android:name="com.example.lovediary.MainActivity"
+47-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:24:13-41
+48            android:exported="true"
+48-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:25:13-36
+49            android:label="@string/app_name"
+49-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:26:13-45
+50            android:theme="@style/Theme.LoveDiary" >
+50-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:27:13-51
+51            <intent-filter>
+51-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:28:13-32:29
+52                <action android:name="android.intent.action.MAIN" />
+52-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:29:17-69
+52-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:29:25-66
+53
+54                <category android:name="android.intent.category.LAUNCHER" />
+54-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:31:17-77
+54-->C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:31:27-74
+55            </intent-filter>
+56        </activity>
+57        <activity
+57-->[androidx.compose.ui:ui-test-manifest:1.7.2] C:\Users\Administrator\.gradle\caches\8.13\transforms\e2075eaaa1b10e8a44f3ed47adebe654\transformed\ui-test-manifest-1.7.2\AndroidManifest.xml:23:9-25:39
+58            android:name="androidx.activity.ComponentActivity"
+58-->[androidx.compose.ui:ui-test-manifest:1.7.2] C:\Users\Administrator\.gradle\caches\8.13\transforms\e2075eaaa1b10e8a44f3ed47adebe654\transformed\ui-test-manifest-1.7.2\AndroidManifest.xml:24:13-63
+59            android:exported="true" />
+59-->[androidx.compose.ui:ui-test-manifest:1.7.2] C:\Users\Administrator\.gradle\caches\8.13\transforms\e2075eaaa1b10e8a44f3ed47adebe654\transformed\ui-test-manifest-1.7.2\AndroidManifest.xml:25:13-36
+60
+61        <provider
+61-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Administrator\.gradle\caches\8.13\transforms\4bd8de463fccbcdb1bebf73369b92788\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+62            android:name="androidx.startup.InitializationProvider"
+62-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Administrator\.gradle\caches\8.13\transforms\4bd8de463fccbcdb1bebf73369b92788\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+63            android:authorities="com.example.lovediary.androidx-startup"
+63-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Administrator\.gradle\caches\8.13\transforms\4bd8de463fccbcdb1bebf73369b92788\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+64            android:exported="false" >
+64-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Administrator\.gradle\caches\8.13\transforms\4bd8de463fccbcdb1bebf73369b92788\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+65            <meta-data
+65-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Administrator\.gradle\caches\8.13\transforms\4bd8de463fccbcdb1bebf73369b92788\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+66                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+66-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Administrator\.gradle\caches\8.13\transforms\4bd8de463fccbcdb1bebf73369b92788\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+67                android:value="androidx.startup" />
+67-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Administrator\.gradle\caches\8.13\transforms\4bd8de463fccbcdb1bebf73369b92788\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+68            <meta-data
+68-->[androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Administrator\.gradle\caches\8.13\transforms\f6ae55eba024974bf37cd846bab559ad\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:29:13-31:52
+69                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+69-->[androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Administrator\.gradle\caches\8.13\transforms\f6ae55eba024974bf37cd846bab559ad\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:30:17-78
+70                android:value="androidx.startup" />
+70-->[androidx.lifecycle:lifecycle-process:2.8.6] C:\Users\Administrator\.gradle\caches\8.13\transforms\f6ae55eba024974bf37cd846bab559ad\transformed\lifecycle-process-2.8.6\AndroidManifest.xml:31:17-49
+71            <meta-data
+71-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+72                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+72-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+73                android:value="androidx.startup" />
+73-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+74        </provider>
+75
+76        <activity
+76-->[androidx.compose.ui:ui-tooling-android:1.7.2] C:\Users\Administrator\.gradle\caches\8.13\transforms\dc1888f44af46f57cdc49ef3021f632b\transformed\ui-tooling-release\AndroidManifest.xml:23:9-25:39
+77            android:name="androidx.compose.ui.tooling.PreviewActivity"
+77-->[androidx.compose.ui:ui-tooling-android:1.7.2] C:\Users\Administrator\.gradle\caches\8.13\transforms\dc1888f44af46f57cdc49ef3021f632b\transformed\ui-tooling-release\AndroidManifest.xml:24:13-71
+78            android:exported="true" />
+78-->[androidx.compose.ui:ui-tooling-android:1.7.2] C:\Users\Administrator\.gradle\caches\8.13\transforms\dc1888f44af46f57cdc49ef3021f632b\transformed\ui-tooling-release\AndroidManifest.xml:25:13-36
+79
+80        <service
+80-->[androidx.room:room-runtime:2.6.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\b6e1f958e7347eb46e976b7bc9d8685f\transformed\room-runtime-2.6.1\AndroidManifest.xml:24:9-28:63
+81            android:name="androidx.room.MultiInstanceInvalidationService"
+81-->[androidx.room:room-runtime:2.6.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\b6e1f958e7347eb46e976b7bc9d8685f\transformed\room-runtime-2.6.1\AndroidManifest.xml:25:13-74
+82            android:directBootAware="true"
+82-->[androidx.room:room-runtime:2.6.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\b6e1f958e7347eb46e976b7bc9d8685f\transformed\room-runtime-2.6.1\AndroidManifest.xml:26:13-43
+83            android:exported="false" />
+83-->[androidx.room:room-runtime:2.6.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\b6e1f958e7347eb46e976b7bc9d8685f\transformed\room-runtime-2.6.1\AndroidManifest.xml:27:13-37
+84
+85        <receiver
+85-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+86            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+86-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+87            android:directBootAware="false"
+87-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+88            android:enabled="true"
+88-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+89            android:exported="true"
+89-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+90            android:permission="android.permission.DUMP" >
+90-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+91            <intent-filter>
+91-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+92                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+92-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+92-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+93            </intent-filter>
+94            <intent-filter>
+94-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+95                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+95-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+95-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+96            </intent-filter>
+97            <intent-filter>
+97-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+98                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+98-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+98-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+99            </intent-filter>
+100            <intent-filter>
+100-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+101                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+101-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+101-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Administrator\.gradle\caches\8.13\transforms\6f2ab0e9072bfed95244dc64e893b890\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+102            </intent-filter>
+103        </receiver>
+104    </application>
+105
+106</manifest>
