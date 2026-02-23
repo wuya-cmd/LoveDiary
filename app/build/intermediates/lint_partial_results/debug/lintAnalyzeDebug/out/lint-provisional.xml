@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.13.0" type="conditional_incidents">
+
+    <incident
+        id="ScopedStorage"
+        severity="warning"
+        message="">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
+            line="7"
+            column="36"
+            startOffset="291"
+            endLine="7"
+            endColumn="77"
+            endOffset="332"/>
+        <map>
+            <entry
+                name="maxSdkVersion"
+                int="32"/>
+            <entry
+                name="read"
+                boolean="false"/>
+        </map>
+    </incident>
+
+    <incident
+        id="ScopedStorage"
+        severity="warning"
+        message="">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
+            line="8"
+            column="36"
+            startOffset="399"
+            endLine="8"
+            endColumn="76"
+            endOffset="439"/>
+        <map>
+            <entry
+                name="maxSdkVersion"
+                int="32"/>
+            <entry
+                name="read"
+                boolean="true"/>
+        </map>
+    </incident>
+
+    <incident
+        id="NewApi"
+        severity="error"
+        message="">
+        <fix-data minSdk="24-∞" requiresApi="26-∞"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/lovediary/ui/viewmodel/DiaryViewModel.kt"
+            line="122"
+            column="37"
+            startOffset="3163"
+            endLine="122"
+            endColumn="40"
+            endOffset="3166"/>
+        <map>
+            <entry
+                name="desc"
+                string="()"/>
+            <entry
+                name="message"
+                string="Call requires API level 26 (current min is %1$s): `java.time.LocalDateTime#now`"/>
+            <api-levels id="minSdk"
+                value="24-∞"/>
+            <entry
+                name="name"
+                string="now"/>
+            <entry
+                name="owner"
+                string="java.time.LocalDateTime"/>
+            <api-levels id="requiresApi"
+                value="26-∞"/>
+        </map>
+    </incident>
+
+    <incident
+        id="NewApi"
+        severity="error"
+        message="">
+        <fix-data minSdk="24-∞" requiresApi="26-∞"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/lovediary/ui/viewmodel/DiaryViewModel.kt"
+            line="122"
+            column="43"
+            startOffset="3169"
+            endLine="122"
+            endColumn="49"
+            endOffset="3175"/>
+        <map>
+            <entry
+                name="desc"
+                string="(Ljava.time.format.DateTimeFormatter;)"/>
+            <entry
+                name="message"
+                string="Call requires API level 26 (current min is %1$s): `java.time.LocalDateTime#format`"/>
+            <api-levels id="minSdk"
+                value="24-∞"/>
+            <entry
+                name="name"
+                string="format"/>
+            <entry
+                name="owner"
+                string="java.time.LocalDateTime"/>
+            <api-levels id="requiresApi"
+                value="26-∞"/>
+        </map>
+    </incident>
+
+    <incident
+        id="NewApi"
+        severity="error"
+        message="">
+        <fix-data minSdk="24-∞" requiresApi="26-∞"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/lovediary/ui/viewmodel/DiaryViewModel.kt"
+            line="122"
+            column="50"
+            startOffset="3176"
+            endLine="122"
+            endColumn="87"
+            endOffset="3213"/>
+        <map>
+            <entry
+                name="message"
+                string="Field requires API level 26 (current min is %1$s): `java.time.format.DateTimeFormatter#ISO_LOCAL_DATE_TIME`"/>
+            <api-levels id="minSdk"
+                value="24-∞"/>
+            <entry
+                name="name"
+                string="ISO_LOCAL_DATE_TIME"/>
+            <entry
+                name="owner"
+                string="java.time.format.DateTimeFormatter"/>
+            <api-levels id="requiresApi"
+                value="26-∞"/>
+        </map>
+    </incident>
+
+    <incident
+        id="NewApi"
+        severity="error"
+        message="">
+        <fix-data minSdk="24-∞" requiresApi="26-∞"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/lovediary/ui/viewmodel/DiaryViewModel.kt"
+            line="143"
+            column="37"
+            startOffset="3952"
+            endLine="143"
+            endColumn="40"
+            endOffset="3955"/>
+        <map>
+            <entry
+                name="desc"
+                string="()"/>
+            <entry
+                name="message"
+                string="Call requires API level 26 (current min is %1$s): `java.time.LocalDateTime#now`"/>
+            <api-levels id="minSdk"
+                value="24-∞"/>
+            <entry
+                name="name"
+                string="now"/>
+            <entry
+                name="owner"
+                string="java.time.LocalDateTime"/>
+            <api-levels id="requiresApi"
+                value="26-∞"/>
+        </map>
+    </incident>
+
+    <incident
+        id="NewApi"
+        severity="error"
+        message="">
+        <fix-data minSdk="24-∞" requiresApi="26-∞"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/lovediary/ui/viewmodel/DiaryViewModel.kt"
+            line="143"
+            column="43"
+            startOffset="3958"
+            endLine="143"
+            endColumn="49"
+            endOffset="3964"/>
+        <map>
+            <entry
+                name="desc"
+                string="(Ljava.time.format.DateTimeFormatter;)"/>
+            <entry
+                name="message"
+                string="Call requires API level 26 (current min is %1$s): `java.time.LocalDateTime#format`"/>
+            <api-levels id="minSdk"
+                value="24-∞"/>
+            <entry
+                name="name"
+                string="format"/>
+            <entry
+                name="owner"
+                string="java.time.LocalDateTime"/>
+            <api-levels id="requiresApi"
+                value="26-∞"/>
+        </map>
+    </incident>
+
+    <incident
+        id="NewApi"
+        severity="error"
+        message="">
+        <fix-data minSdk="24-∞" requiresApi="26-∞"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/lovediary/ui/viewmodel/DiaryViewModel.kt"
+            line="143"
+            column="50"
+            startOffset="3965"
+            endLine="143"
+            endColumn="87"
+            endOffset="4002"/>
+        <map>
+            <entry
+                name="message"
+                string="Field requires API level 26 (current min is %1$s): `java.time.format.DateTimeFormatter#ISO_LOCAL_DATE_TIME`"/>
+            <api-levels id="minSdk"
+                value="24-∞"/>
+            <entry
+                name="name"
+                string="ISO_LOCAL_DATE_TIME"/>
+            <entry
+                name="owner"
+                string="java.time.format.DateTimeFormatter"/>
+            <api-levels id="requiresApi"
+                value="26-∞"/>
+        </map>
+    </incident>
+
+    <incident
+        id="NewApi"
+        severity="error"
+        message="">
+        <fix-data minSdk="24-∞" requiresApi="26-∞"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/lovediary/ui/viewmodel/DiaryViewModel.kt"
+            line="166"
+            column="37"
+            startOffset="4713"
+            endLine="166"
+            endColumn="40"
+            endOffset="4716"/>
+        <map>
+            <entry
+                name="desc"
+                string="()"/>
+            <entry
+                name="message"
+                string="Call requires API level 26 (current min is %1$s): `java.time.LocalDateTime#now`"/>
+            <api-levels id="minSdk"
+                value="24-∞"/>
+            <entry
+                name="name"
+                string="now"/>
+            <entry
+                name="owner"
+                string="java.time.LocalDateTime"/>
+            <api-levels id="requiresApi"
+                value="26-∞"/>
+        </map>
+    </incident>
+
+    <incident
+        id="NewApi"
+        severity="error"
+        message="">
+        <fix-data minSdk="24-∞" requiresApi="26-∞"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/lovediary/ui/viewmodel/DiaryViewModel.kt"
+            line="166"
+            column="43"
+            startOffset="4719"
+            endLine="166"
+            endColumn="49"
+            endOffset="4725"/>
+        <map>
+            <entry
+                name="desc"
+                string="(Ljava.time.format.DateTimeFormatter;)"/>
+            <entry
+                name="message"
+                string="Call requires API level 26 (current min is %1$s): `java.time.LocalDateTime#format`"/>
+            <api-levels id="minSdk"
+                value="24-∞"/>
+            <entry
+                name="name"
+                string="format"/>
+            <entry
+                name="owner"
+                string="java.time.LocalDateTime"/>
+            <api-levels id="requiresApi"
+                value="26-∞"/>
+        </map>
+    </incident>
+
+    <incident
+        id="NewApi"
+        severity="error"
+        message="">
+        <fix-data minSdk="24-∞" requiresApi="26-∞"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/lovediary/ui/viewmodel/DiaryViewModel.kt"
+            line="166"
+            column="50"
+            startOffset="4726"
+            endLine="166"
+            endColumn="87"
+            endOffset="4763"/>
+        <map>
+            <entry
+                name="message"
+                string="Field requires API level 26 (current min is %1$s): `java.time.format.DateTimeFormatter#ISO_LOCAL_DATE_TIME`"/>
+            <api-levels id="minSdk"
+                value="24-∞"/>
+            <entry
+                name="name"
+                string="ISO_LOCAL_DATE_TIME"/>
+            <entry
+                name="owner"
+                string="java.time.format.DateTimeFormatter"/>
+            <api-levels id="requiresApi"
+                value="26-∞"/>
+        </map>
+    </incident>
+
+    <incident
+        id="NewApi"
+        severity="error"
+        message="">
+        <fix-data minSdk="24-∞" requiresApi="26-∞"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/lovediary/ui/viewmodel/DiaryViewModel.kt"
+            line="186"
+            column="37"
+            startOffset="5455"
+            endLine="186"
+            endColumn="40"
+            endOffset="5458"/>
+        <map>
+            <entry
+                name="desc"
+                string="()"/>
+            <entry
+                name="message"
+                string="Call requires API level 26 (current min is %1$s): `java.time.LocalDateTime#now`"/>
+            <api-levels id="minSdk"
+                value="24-∞"/>
+            <entry
+                name="name"
+                string="now"/>
+            <entry
+                name="owner"
+                string="java.time.LocalDateTime"/>
+            <api-levels id="requiresApi"
+                value="26-∞"/>
+        </map>
+    </incident>
+
+    <incident
+        id="NewApi"
+        severity="error"
+        message="">
+        <fix-data minSdk="24-∞" requiresApi="26-∞"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/lovediary/ui/viewmodel/DiaryViewModel.kt"
+            line="186"
+            column="43"
+            startOffset="5461"
+            endLine="186"
+            endColumn="49"
+            endOffset="5467"/>
+        <map>
+            <entry
+                name="desc"
+                string="(Ljava.time.format.DateTimeFormatter;)"/>
+            <entry
+                name="message"
+                string="Call requires API level 26 (current min is %1$s): `java.time.LocalDateTime#format`"/>
+            <api-levels id="minSdk"
+                value="24-∞"/>
+            <entry
+                name="name"
+                string="format"/>
+            <entry
+                name="owner"
+                string="java.time.LocalDateTime"/>
+            <api-levels id="requiresApi"
+                value="26-∞"/>
+        </map>
+    </incident>
+
+    <incident
+        id="NewApi"
+        severity="error"
+        message="">
+        <fix-data minSdk="24-∞" requiresApi="26-∞"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/lovediary/ui/viewmodel/DiaryViewModel.kt"
+            line="186"
+            column="50"
+            startOffset="5468"
+            endLine="186"
+            endColumn="87"
+            endOffset="5505"/>
+        <map>
+            <entry
+                name="message"
+                string="Field requires API level 26 (current min is %1$s): `java.time.format.DateTimeFormatter#ISO_LOCAL_DATE_TIME`"/>
+            <api-levels id="minSdk"
+                value="24-∞"/>
+            <entry
+                name="name"
+                string="ISO_LOCAL_DATE_TIME"/>
+            <entry
+                name="owner"
+                string="java.time.format.DateTimeFormatter"/>
+            <api-levels id="requiresApi"
+                value="26-∞"/>
+        </map>
+    </incident>
+
+</incidents>

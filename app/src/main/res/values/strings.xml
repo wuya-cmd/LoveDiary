@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LoveDiary</string>
+    <string name="app_name">朝暮日记</string>
     <string name="login_title">登录</string>
     <string name="login_password_hint">请输入密码</string>
     <string name="login_button">登录</string>
@@ -7,7 +7,7 @@
     <string name="diary_list_title">我的日记</string>
     <string name="diary_add_button">添加日记</string>
     <string name="diary_edit_title">编辑日记</string>
-    <string name="diary_content_hint">写下你的心情...</string>
+    <string name="diary_content_hint">记下你的心情...</string>
     <string name="diary_privacy_level">隐私等级</string>
     <string name="diary_privacy_public">🌐 公开</string>
     <string name="diary_privacy_private">🔒 私密</string>

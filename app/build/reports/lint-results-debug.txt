@@ -1,0 +1,493 @@
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:10: Warning: The Google Play store has a policy that limits usage of MANAGE_EXTERNAL_STORAGE [ScopedStorage]
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "ScopedStorage":
+   Scoped storage is enforced on Android 10+ (or Android 11+ if using
+   requestLegacyExternalStorage). In particular, WRITE_EXTERNAL_STORAGE will
+   no longer provide write access to all files; it will provide the equivalent
+   of READ_EXTERNAL_STORAGE instead.
+
+   As of Android 13, if you need to query or interact with MediaStore or media
+   files on the shared storage, you should be using instead one or more new
+   storage permissions:
+   * android.permission.READ_MEDIA_IMAGES
+   * android.permission.READ_MEDIA_VIDEO
+   * android.permission.READ_MEDIA_AUDIO
+
+   and then add maxSdkVersion="33" to the older permission. See the developer
+   guide for how to do this:
+   https://developer.android.com/about/versions/13/behavior-changes-13#granula
+   r-media-permissions
+
+   The MANAGE_EXTERNAL_STORAGE permission can be used to manage all files, but
+   it is rarely necessary and most apps on Google Play are not allowed to use
+   it. Most apps should instead migrate to use scoped storage. To modify or
+   delete files, apps should request write access from the user as described
+   at https://goo.gle/android-mediastore-createwriterequest.
+
+   To learn more, read these resources: Play policy:
+   https://goo.gle/policy-storage-help Allowable use cases:
+   https://goo.gle/policy-storage-usecases
+
+   https://goo.gle/android-storage-usecases
+
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\ui\viewmodel\DiaryViewModel.kt:122: Error: Call requires API level 26, or core library desugaring (current min is 24): java.time.LocalDateTime#format [NewApi]
+            val now = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                          ~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\ui\viewmodel\DiaryViewModel.kt:122: Error: Call requires API level 26, or core library desugaring (current min is 24): java.time.LocalDateTime#now [NewApi]
+            val now = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                    ~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\ui\viewmodel\DiaryViewModel.kt:122: Error: Field requires API level 26, or core library desugaring (current min is 24): java.time.format.DateTimeFormatter#ISO_LOCAL_DATE_TIME [NewApi]
+            val now = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\ui\viewmodel\DiaryViewModel.kt:143: Error: Call requires API level 26, or core library desugaring (current min is 24): java.time.LocalDateTime#format [NewApi]
+            val now = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                          ~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\ui\viewmodel\DiaryViewModel.kt:143: Error: Call requires API level 26, or core library desugaring (current min is 24): java.time.LocalDateTime#now [NewApi]
+            val now = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                    ~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\ui\viewmodel\DiaryViewModel.kt:143: Error: Field requires API level 26, or core library desugaring (current min is 24): java.time.format.DateTimeFormatter#ISO_LOCAL_DATE_TIME [NewApi]
+            val now = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\ui\viewmodel\DiaryViewModel.kt:166: Error: Call requires API level 26, or core library desugaring (current min is 24): java.time.LocalDateTime#format [NewApi]
+            val now = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                          ~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\ui\viewmodel\DiaryViewModel.kt:166: Error: Call requires API level 26, or core library desugaring (current min is 24): java.time.LocalDateTime#now [NewApi]
+            val now = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                    ~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\ui\viewmodel\DiaryViewModel.kt:166: Error: Field requires API level 26, or core library desugaring (current min is 24): java.time.format.DateTimeFormatter#ISO_LOCAL_DATE_TIME [NewApi]
+            val now = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\ui\viewmodel\DiaryViewModel.kt:186: Error: Call requires API level 26, or core library desugaring (current min is 24): java.time.LocalDateTime#format [NewApi]
+            val now = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                          ~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\ui\viewmodel\DiaryViewModel.kt:186: Error: Call requires API level 26, or core library desugaring (current min is 24): java.time.LocalDateTime#now [NewApi]
+            val now = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                    ~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\ui\viewmodel\DiaryViewModel.kt:186: Error: Field requires API level 26, or core library desugaring (current min is 24): java.time.format.DateTimeFormatter#ISO_LOCAL_DATE_TIME [NewApi]
+            val now = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "NewApi":
+   This check scans through all the Android API calls in the application and
+   warns about any calls that are not available on all versions targeted by
+   this application (according to its minimum SDK attribute in the manifest).
+
+   If you really want to use this API and don't need to support older devices
+   just set the minSdkVersion in your build.gradle or AndroidManifest.xml
+   files.
+
+   If your code is deliberately accessing newer APIs, and you have ensured
+   (e.g. with conditional execution) that this code will only ever be called
+   on a supported platform, then you can annotate your class or method with
+   the @TargetApi annotation specifying the local minimum SDK to apply, such
+   as @TargetApi(11), such that this check considers 11 rather than your
+   manifest file's minimum SDK as the required API level.
+
+   If you are deliberately setting android: attributes in style definitions,
+   make sure you place this in a values-vNN folder in order to avoid running
+   into runtime conflicts on certain devices where manufacturers have added
+   custom attributes whose ids conflict with the new ones on later platforms.
+
+   Similarly, you can use tools:targetApi="11" in an XML file to indicate that
+   the element will only be inflated in an adequate context.
+
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\build.gradle.kts:14: Warning: Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details. [OldTargetApi]
+        targetSdk = 35
+        ~~~~~~~~~~~~~~
+
+   Explanation for issues of type "OldTargetApi":
+   When your application or sdk runs on a version of Android that is more
+   recent than your targetSdkVersion specifies that it has been tested with,
+   various compatibility modes kick in. This ensures that your application
+   continues to work, but it may look out of place. For example, if the
+   targetSdkVersion is less than 14, your app may get an option button in the
+   UI.
+
+   To fix this issue, set the targetSdkVersion to the highest available value.
+   Then test your app to make sure everything works correctly. You may want to
+   consult the compatibility notes to see what changes apply to each version
+   you are adding support for:
+   https://developer.android.com/reference/android/os/Build.VERSION_CODES.html
+   as well as follow this guide:
+   https://developer.android.com/distribute/best-practices/develop/target-sdk.
+   html
+
+   https://developer.android.com/distribute/best-practices/develop/target-sdk.html
+
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:26: Warning: Redundant label can be removed [RedundantLabel]
+            android:label="@string/app_name"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "RedundantLabel":
+   When an activity does not have a label attribute, it will use the one from
+   the application tag. Since the application has already specified the same
+   label, the label on this activity can be omitted.
+
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\AndroidManifest.xml:6: Warning: Your app is currently not handling Selected Photos Access introduced in Android 14+ [SelectedPhotoAccess]
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "SelectedPhotoAccess":
+   Selected Photo Access is a new ability for users to share partial access to
+   their photo library when apps request access to their device storage on
+   Android 14+.
+
+   Instead of letting the system manage the selection lifecycle, we recommend
+   you adapt your app to handle partial access to the photo library.
+
+   https://developer.android.com/about/versions/14/changes/partial-photo-video-access
+
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\build.gradle.kts:9: Warning: A newer version of compileSdkVersion than 35 is available: 36 [GradleDependency]
+    compileSdk = 35
+    ~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\gradle\libs.versions.toml:17: Warning: A newer version of androidx.security:security-crypto than 1.1.0-alpha04 is available: 1.1.0-alpha05 [GradleDependency]
+androidx-security = "1.1.0-alpha04"
+                    ~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\gradle\libs.versions.toml:69: Warning: A newer version of com.google.devtools.ksp than 1.9.23-1.0.20 is available: 1.9.25-1.0.20 [GradleDependency]
+google-devtools-ksp = { id = "com.google.devtools.ksp", version = "1.9.23-1.0.20" }
+                                                                  ~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\gradle\libs.versions.toml:68: Warning: A newer version of org.jetbrains.kotlin.android than 1.9.23 is available: 2.2.21 [NewerVersionAvailable]
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version = "1.9.23" }
+                                                                            ~~~~~~~~
+
+   Explanation for issues of type "NewerVersionAvailable":
+   This detector checks with a central repository to see if there are newer
+   versions available for the dependencies used by this project. This is
+   similar to the GradleDependency check, which checks for newer versions
+   available in the Android SDK tools and libraries, but this works with any
+   MavenCentral dependency, and connects to the library every time, which
+   makes it more flexible but also much slower.
+
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\ui\screens\AddDiaryScreen.kt:97: Hint: Prefer mutableIntStateOf instead of mutableStateOf [AutoboxingStateCreation from androidx.compose.runtime]
+    var privacyLevel by remember { mutableStateOf(0) }
+                                   ~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\ui\screens\EditDiaryScreen.kt:54: Hint: Prefer mutableIntStateOf instead of mutableStateOf [AutoboxingStateCreation from androidx.compose.runtime]
+    var privacyLevel by remember { mutableStateOf(currentDiary?.privacyLevel ?: 0) }
+                                   ~~~~~~~~~~~~~~
+
+   Explanation for issues of type "AutoboxingStateCreation":
+   Calling mutableStateOf<T>() when T is either backed by a primitive type on
+   the JVM or is a value class results in a state implementation that requires
+   all state values to be boxed. This usually causes an additional allocation
+   for each state write, and adds some additional work to auto-unbox values
+   when reading the value of the state. Instead, prefer to use a specialized
+   primitive state implementation for Int, Long, Float, and Double when the
+   state does not need to track null values and does not override the default
+   SnapshotMutationPolicy. See mutableIntStateOf(), mutableLongStateOf(),
+   mutableFloatStateOf(), and mutableDoubleStateOf() for more information.
+
+   Vendor: Jetpack Compose
+   Identifier: androidx.compose.runtime
+   Feedback: https://issuetracker.google.com/issues/new?component=612128
+
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:5: Warning: The resource R.color.onPrimary appears to be unused [UnusedResources]
+    <color name="onPrimary">#FFFFFF</color>
+           ~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:9: Warning: The resource R.color.secondaryVariant appears to be unused [UnusedResources]
+    <color name="secondaryVariant">#FF91A4</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:10: Warning: The resource R.color.onSecondary appears to be unused [UnusedResources]
+    <color name="onSecondary">#FFFFFF</color>
+           ~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:14: Warning: The resource R.color.onBackground appears to be unused [UnusedResources]
+    <color name="onBackground">#212121</color>
+           ~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:17: Warning: The resource R.color.surface appears to be unused [UnusedResources]
+    <color name="surface">#FFFFFF</color>
+           ~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:18: Warning: The resource R.color.onSurface appears to be unused [UnusedResources]
+    <color name="onSurface">#212121</color>
+           ~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:21: Warning: The resource R.color.error appears to be unused [UnusedResources]
+    <color name="error">#B00020</color>
+           ~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:22: Warning: The resource R.color.onError appears to be unused [UnusedResources]
+    <color name="onError">#FFFFFF</color>
+           ~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:25: Warning: The resource R.color.gray appears to be unused [UnusedResources]
+    <color name="gray">#9E9E9E</color>
+           ~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:26: Warning: The resource R.color.lightGray appears to be unused [UnusedResources]
+    <color name="lightGray">#F8F0F5</color>
+           ~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:27: Warning: The resource R.color.darkGray appears to be unused [UnusedResources]
+    <color name="darkGray">#616161</color>
+           ~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:28: Warning: The resource R.color.white appears to be unused [UnusedResources]
+    <color name="white">#FFFFFF</color>
+           ~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:29: Warning: The resource R.color.black appears to be unused [UnusedResources]
+    <color name="black">#000000</color>
+           ~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:30: Warning: The resource R.color.transparent appears to be unused [UnusedResources]
+    <color name="transparent">#00000000</color>
+           ~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:31: Warning: The resource R.color.success appears to be unused [UnusedResources]
+    <color name="success">#4CAF50</color>
+           ~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:32: Warning: The resource R.color.warning appears to be unused [UnusedResources]
+    <color name="warning">#FFC107</color>
+           ~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:35: Warning: The resource R.color.lovePink appears to be unused [UnusedResources]
+    <color name="lovePink">#FF6B81</color>
+           ~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:36: Warning: The resource R.color.softPink appears to be unused [UnusedResources]
+    <color name="softPink">#FFB6C1</color>
+           ~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\colors.xml:37: Warning: The resource R.color.heartRed appears to be unused [UnusedResources]
+    <color name="heartRed">#FF1744</color>
+           ~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:6: Warning: The resource R.string.login_forgot_password appears to be unused [UnusedResources]
+    <string name="login_forgot_password">忘记密码？</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:7: Warning: The resource R.string.diary_list_title appears to be unused [UnusedResources]
+    <string name="diary_list_title">我的日记</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:8: Warning: The resource R.string.diary_add_button appears to be unused [UnusedResources]
+    <string name="diary_add_button">添加日记</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:9: Warning: The resource R.string.diary_edit_title appears to be unused [UnusedResources]
+    <string name="diary_edit_title">编辑日记</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:10: Warning: The resource R.string.diary_content_hint appears to be unused [UnusedResources]
+    <string name="diary_content_hint">写下你的心情...</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:11: Warning: The resource R.string.diary_privacy_level appears to be unused [UnusedResources]
+    <string name="diary_privacy_level">隐私等级</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:12: Warning: The resource R.string.diary_privacy_public appears to be unused [UnusedResources]
+    <string name="diary_privacy_public">🌐 公开</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:13: Warning: The resource R.string.diary_privacy_private appears to be unused [UnusedResources]
+    <string name="diary_privacy_private">🔒 私密</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:14: Warning: The resource R.string.diary_privacy_encrypted appears to be unused [UnusedResources]
+    <string name="diary_privacy_encrypted">🔐 加密</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:15: Warning: The resource R.string.diary_save_button appears to be unused [UnusedResources]
+    <string name="diary_save_button">保存</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:16: Warning: The resource R.string.diary_delete_button appears to be unused [UnusedResources]
+    <string name="diary_delete_button">删除</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:17: Warning: The resource R.string.diary_backup_title appears to be unused [UnusedResources]
+    <string name="diary_backup_title">备份与恢复</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:18: Warning: The resource R.string.diary_backup_export appears to be unused [UnusedResources]
+    <string name="diary_backup_export">导出日记</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:19: Warning: The resource R.string.diary_backup_import appears to be unused [UnusedResources]
+    <string name="diary_backup_import">导入日记</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:20: Warning: The resource R.string.diary_settings_title appears to be unused [UnusedResources]
+    <string name="diary_settings_title">设置</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:21: Warning: The resource R.string.diary_settings_change_password appears to be unused [UnusedResources]
+    <string name="diary_settings_change_password">修改密码</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:22: Warning: The resource R.string.diary_settings_compression appears to be unused [UnusedResources]
+    <string name="diary_settings_compression">图片压缩设置</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:23: Warning: The resource R.string.diary_settings_auto_lock appears to be unused [UnusedResources]
+    <string name="diary_settings_auto_lock">自动锁定</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:24: Warning: The resource R.string.diary_locked_content appears to be unused [UnusedResources]
+    <string name="diary_locked_content">🔒 这是一篇私密日记，需要验证身份后查看</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:25: Warning: The resource R.string.diary_encrypted_content appears to be unused [UnusedResources]
+    <string name="diary_encrypted_content">🔐 这是一篇加密日记，需要验证身份后查看</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:26: Warning: The resource R.string.diary_unlock_button appears to be unused [UnusedResources]
+    <string name="diary_unlock_button">解锁</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:27: Warning: The resource R.string.diary_logout_button appears to be unused [UnusedResources]
+    <string name="diary_logout_button">退出登录</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:28: Warning: The resource R.string.password_old_hint appears to be unused [UnusedResources]
+    <string name="password_old_hint">请输入原密码</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:29: Warning: The resource R.string.password_new_hint appears to be unused [UnusedResources]
+    <string name="password_new_hint">请输入新密码</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:30: Warning: The resource R.string.password_confirm_hint appears to be unused [UnusedResources]
+    <string name="password_confirm_hint">请确认新密码</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:31: Warning: The resource R.string.password_change_button appears to be unused [UnusedResources]
+    <string name="password_change_button">修改密码</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:32: Warning: The resource R.string.compression_quality appears to be unused [UnusedResources]
+    <string name="compression_quality">压缩质量</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:33: Warning: The resource R.string.compression_use_webp appears to be unused [UnusedResources]
+    <string name="compression_use_webp">使用WebP格式</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:34: Warning: The resource R.string.compression_quality_high appears to be unused [UnusedResources]
+    <string name="compression_quality_high">高质量</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:35: Warning: The resource R.string.compression_quality_medium appears to be unused [UnusedResources]
+    <string name="compression_quality_medium">中质量</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:36: Warning: The resource R.string.compression_quality_low appears to be unused [UnusedResources]
+    <string name="compression_quality_low">低质量</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:37: Warning: The resource R.string.backup_loading appears to be unused [UnusedResources]
+    <string name="backup_loading">正在备份...</string>
+            ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:38: Warning: The resource R.string.backup_success appears to be unused [UnusedResources]
+    <string name="backup_success">备份成功</string>
+            ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:39: Warning: The resource R.string.backup_failed appears to be unused [UnusedResources]
+    <string name="backup_failed">备份失败</string>
+            ~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:40: Warning: The resource R.string.import_loading appears to be unused [UnusedResources]
+    <string name="import_loading">正在导入...</string>
+            ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:41: Warning: The resource R.string.import_success appears to be unused [UnusedResources]
+    <string name="import_success">导入成功</string>
+            ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:42: Warning: The resource R.string.import_failed appears to be unused [UnusedResources]
+    <string name="import_failed">导入失败</string>
+            ~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:43: Warning: The resource R.string.image_select_from_gallery appears to be unused [UnusedResources]
+    <string name="image_select_from_gallery">从相册选择</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:44: Warning: The resource R.string.image_take_photo appears to be unused [UnusedResources]
+    <string name="image_take_photo">拍照</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:45: Warning: The resource R.string.image_compress_loading appears to be unused [UnusedResources]
+    <string name="image_compress_loading">正在压缩图片...</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UnusedResources":
+   Unused resources make applications larger and slow down builds.
+
+
+   The unused resource check can ignore tests. If you want to include
+   resources that are only referenced from tests, consider packaging them in a
+   test source set instead.
+
+   You can include test sources in the unused resource check by setting the
+   system property lint.unused-resources.include-tests =true, and to exclude
+   them (usually for performance reasons), use
+   lint.unused-resources.exclude-tests =true.
+   ,
+
+   Available options:
+
+   **skip-libraries** (default is true):
+   Whether the unused resource check should skip reporting unused resources in libraries.
+
+   Many libraries will declare resources that are part of the library surface; other modules depending on the library will also reference the resources. To avoid reporting all these resources as unused (in the context of a library), the unused resource check normally skips reporting unused resources in libraries. Instead, run the unused resource check on the consuming app module (along with `checkDependencies=true`).
+
+   However, there are cases where you want to check that all the resources declared in a library are used; in that case, you can disable the skip option.
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UnusedResources">
+           <option name="skip-libraries" value="true" />
+       </issue>
+   </lint>
+   ```
+
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:10: Warning: Replace "..." with ellipsis character (…, &#8230;) ? [TypographyEllipsis]
+    <string name="diary_content_hint">写下你的心情...</string>
+                                      ~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:37: Warning: Replace "..." with ellipsis character (…, &#8230;) ? [TypographyEllipsis]
+    <string name="backup_loading">正在备份...</string>
+                                  ~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:40: Warning: Replace "..." with ellipsis character (…, &#8230;) ? [TypographyEllipsis]
+    <string name="import_loading">正在导入...</string>
+                                  ~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\res\values\strings.xml:45: Warning: Replace "..." with ellipsis character (…, &#8230;) ? [TypographyEllipsis]
+    <string name="image_compress_loading">正在压缩图片...</string>
+                                          ~~~~~~~~~
+
+   Explanation for issues of type "TypographyEllipsis":
+   You can replace the string "..." with a dedicated ellipsis character,
+   ellipsis character (u2026, &#8230;). This can help make the text more
+   readable.
+
+   https://en.wikipedia.org/wiki/Ellipsis
+
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\utils\BackupManager.kt:148: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+                sharedPreferences.edit().putString(START_DATE_KEY, anniversaryDate).apply()
+                ~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\ui\screens\HomeScreen.kt:424: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+                            sharedPreferences.edit()
+                            ~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\security\PrivacyManager.kt:85: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        encryptedSharedPreferences.edit()
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Desktop\AIworkspace\Android\LoveDiary\app\src\main\java\com\example\lovediary\security\PrivacyManager.kt:115: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        encryptedSharedPreferences.edit()
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UseKtx":
+   The Android KTX libraries decorates the Android platform SDK as well as
+   various libraries with more convenient extension functions available from
+   Kotlin, allowing you to use default parameters, named parameters, and
+   more.
+
+   Available options:
+
+   **remove-defaults** (default is true):
+   Whether to skip arguments that match the defaults provided by the extension.
+
+   Extensions often provide default values for some of the parameters. For example:
+   ```kotlin
+   fun Path.readLines(charset: Charset = Charsets.UTF_8): List<String> { return Files.readAllLines(this, charset) }
+   ```
+   This lint check will by default automatically omit parameters that match the default, so if your code was calling
+
+   ```kotlin
+   Files.readAllLines(file, Charset.UTF_8)
+   ```
+   lint would replace this with
+   ```kotlin
+   file.readLines()
+   ```
+   rather than
+
+   ```kotlin
+   file.readLines(Charset.UTF_8
+   ```
+   You can turn this behavior off using this option.
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UseKtx">
+           <option name="remove-defaults" value="true" />
+       </issue>
+   </lint>
+   ```
+
+   **require-present** (default is true):
+   Whether to only offer extensions already available.
+
+   This option lets you only have lint suggest extension replacements if those extensions are already available on the class path (in other words, you're already depending on the library containing the extension method.)
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UseKtx">
+           <option name="require-present" value="true" />
+       </issue>
+   </lint>
+   ```
+
+12 errors, 75 warnings, 2 hints

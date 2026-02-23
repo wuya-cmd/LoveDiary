@@ -1,44 +1,35 @@
 package com.example.lovediary.ui.screens
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.lovediary.R
+import com.example.lovediary.data.entity.DiaryImage
 import com.example.lovediary.security.AuthStatus
 import com.example.lovediary.security.PrivacyLevels
 import com.example.lovediary.ui.viewmodel.DiaryViewModel
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * 日记详情屏幕
@@ -54,6 +45,16 @@ fun DiaryDetailScreen(
     var showAuthDialog by remember { mutableStateOf(false) }
     val privacyOptions = viewModel.diaryRepository.privacyManagerPublic.getPrivacyLevelOptions()
     val currentAuthStatus = viewModel.diaryRepository.privacyManagerPublic.checkAuthStatus()
+    
+    // 日记图片列表
+    var diaryImages by remember { mutableStateOf<List<DiaryImage>>(emptyList()) }
+    
+    // 加载日记图片
+    LaunchedEffect(currentDiary) {
+        currentDiary?.let { diary ->
+            diaryImages = viewModel.diaryRepository.getImagesByDiaryId(diary.id)
+        }
+    }
 
     // 检查是否可以编辑日记
     val canEdit = currentDiary?.let { diary ->
@@ -108,103 +109,126 @@ fun DiaryDetailScreen(
             )
         }
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
         ) {
-            currentDiary?.let { diary ->
-                // 日记内容
-                Text(
-                    text = diary.content,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-
-                // 隐私级别
-                val privacyOption = privacyOptions.find { it.value == diary.privacyLevel }
-                if (privacyOption != null) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer
-                        )
-                    ) {
-                        Row(
+            item {
+                currentDiary?.let { diary ->
+                    // 大图展示区域
+                    if (diaryImages.isNotEmpty()) {
+                        val firstImage = diaryImages.first()
+                        Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                                .aspectRatio(1.5f)
+                                .padding(8.dp)
+                                .clip(RoundedCornerShape(16.dp)),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Lock,
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp)
+                            AsyncImage(
+                                model = File(firstImage.imagePath),
+                                contentDescription = "日记主图",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Column {
-                                Text(
-                                    text = privacyOption.label,
-                                    style = MaterialTheme.typography.titleMedium
-                                )
-                                Text(
-                                    text = privacyOption.desc,
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                                // 如果没有权限且是私密或加密日记，显示提示
-                                if (!canEdit) {
-                                    Text(
-                                        text = "需要身份验证才能编辑此日记",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.error
+                        }
+                    }
+                    
+                    // 日记内容
+                    Text(
+                        text = diary.content,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 4.dp)  // 减少内边距
+                            // 从horizontal = 16.dp, vertical = 8.dp改为horizontal = 8.dp, vertical = 4.dp
+                    )
+                    
+                    // 显示日记图片列表
+                    if (diaryImages.size > 1) {
+                        LazyRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp, vertical = 4.dp),  // 减少内边距
+                                // 从horizontal = 16.dp, vertical = 8.dp改为horizontal = 8.dp, vertical = 4.dp
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(diaryImages.drop(1)) { image ->  // 跳过第一张主图
+                                Card(
+                                    modifier = Modifier
+                                        .size(100.dp)
+                                        .clip(RoundedCornerShape(8.dp)),
+                                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                                ) {
+                                    AsyncImage(
+                                        model = File(image.imagePath),
+                                        contentDescription = "日记图片",
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Crop
                                     )
                                 }
                             }
                         }
                     }
-                }
 
-                // 分类
-                Text(
-                    text = "分类: ${diary.category}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+                    // 隐私级别
+                    val privacyOption = privacyOptions.find { it.value == diary.privacyLevel }
+                    if (privacyOption != null) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),  // 从16.dp减少到8.dp
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = privacyOption.label,
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            }
+                        }
+                    }
 
-                // 标签
-                if (diary.tags.isNotEmpty()) {
+                    // 创建时间
                     Text(
-                        text = "标签: ${diary.tags}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.tertiary,
-                        modifier = Modifier.padding(bottom = 8.dp)
+                        text = "创建时间: ${formatDateTime(diary.createTime)}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.outline,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 1.dp)  // 减少垂直内边距
+                            // 从horizontal = 16.dp, vertical = 2.dp改为horizontal = 8.dp, vertical = 1.dp
+                    )
+
+                    // 更新时间
+                    Text(
+                        text = "更新时间: ${formatDateTime(diary.updateTime)}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.outline,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 1.dp)  // 减少垂直内边距
+                            // 从horizontal = 16.dp, vertical = 2.dp改为horizontal = 8.dp, vertical = 1.dp
+                    )
+                } ?: run {
+                    Text(
+                        text = "日记不存在",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
                     )
                 }
-
-                // 创建时间
-                Text(
-                    text = "创建时间: ${diary.createTime}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-
-                // 更新时间
-                Text(
-                    text = "更新时间: ${diary.updateTime}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline
-                )
-            } ?: run {
-                Text(
-                    text = "日记不存在",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.fillMaxWidth()
-                )
             }
         }
     }
@@ -214,7 +238,7 @@ fun DiaryDetailScreen(
         AlertDialog(
             onDismissRequest = { showAuthDialog = false },
             title = { Text("需要身份验证") },
-            text = { Text("此日记为私密或加密内容，需要验证身份后才能编辑。") },
+            text = { Text("此日记为私密内容，需要验证身份后才能编辑。") },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -231,5 +255,19 @@ fun DiaryDetailScreen(
                 }
             }
         )
+    }
+}
+
+/**
+ * 格式化日期时间显示
+ */
+fun formatDateTime(dateTime: String): String {
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("yyyy年MM月dd日 HH:mm", Locale.getDefault())
+        val date = inputFormat.parse(dateTime)
+        outputFormat.format(date ?: Date())
+    } catch (e: Exception) {
+        dateTime
     }
 }

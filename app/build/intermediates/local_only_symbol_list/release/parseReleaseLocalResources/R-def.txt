@@ -5,7 +5,9 @@ color black
 color darkGray
 color error
 color gray
+color heartRed
 color lightGray
+color lovePink
 color onBackground
 color onError
 color onPrimary
@@ -15,11 +17,13 @@ color primary
 color primaryVariant
 color secondary
 color secondaryVariant
+color softPink
 color success
 color surface
 color transparent
 color warning
 color white
+mipmap ic_love
 string app_name
 string backup_failed
 string backup_loading

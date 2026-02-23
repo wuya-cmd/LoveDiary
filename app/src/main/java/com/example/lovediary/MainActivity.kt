@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -34,12 +35,12 @@ import com.example.lovediary.data.database.DiaryDatabase
 import com.example.lovediary.data.repository.DiaryRepository
 import com.example.lovediary.security.PrivacyManager
 import com.example.lovediary.ui.screens.AddDiaryScreen
-import com.example.lovediary.ui.screens.CategoryTagManagerScreen
 import com.example.lovediary.ui.screens.DiaryDetailScreen
 import com.example.lovediary.ui.screens.DisplayScreen
 import com.example.lovediary.ui.screens.EditDiaryScreen
 import com.example.lovediary.ui.screens.HomeScreen
 import com.example.lovediary.ui.screens.LoginScreen
+import com.example.lovediary.ui.screens.LinxiSyncScreen
 import com.example.lovediary.ui.theme.LoveDiaryTheme
 import com.example.lovediary.ui.viewmodel.DiaryViewModel
 
@@ -126,17 +127,14 @@ fun AppNavigation(
                 viewModel = diaryViewModel
             )
         }
-        composable("category_tag_manager") {
-            CategoryTagManagerScreen(
-                navController = navController,
-                viewModel = diaryViewModel,
-                onNavigateBack = {
-                    navController.popBackStack("main", false)
-                }
-            )
-        }
         composable("login") {
             LoginScreen(
+                navController = navController,
+                viewModel = diaryViewModel
+            )
+        }
+        composable("linxi_sync") {
+            LinxiSyncScreen(
                 navController = navController,
                 viewModel = diaryViewModel
             )
@@ -163,6 +161,7 @@ fun MainScreen(
     )
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0, 10, 0, 0), // 1. 全部方向置 0
         bottomBar = {
             NavigationBar {
                 items.forEachIndexed { index, item ->

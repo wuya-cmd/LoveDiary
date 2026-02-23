@@ -19,8 +19,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        
+        // 增加堆内存大小以处理大文件
+        multiDexEnabled = true
     }
-
+    
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -28,25 +31,43 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            
+            // 配置大型堆内存支持
+            manifestPlaceholders["largeHeap"] = "true"
+        }
+        
+        debug {
+            // 配置大型堆内存支持
+            manifestPlaceholders["largeHeap"] = "true"
         }
     }
+    
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    
     buildFeatures {
         compose = true
     }
+    
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.11"
     }
+    
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+    
+    // 增加DEX选项以支持更多方法数
+    dexOptions {
+        javaMaxHeapSize = "4g"
     }
 }
 
@@ -78,6 +99,11 @@ dependencies {
 
     // ExifInterface for image metadata
     implementation(libs.androidx.exifinterface)
+
+    // Jackson for streaming JSON processing
+    implementation(libs.jackson.core)
+    implementation(libs.jackson.annotations)
+    implementation(libs.jackson.databind)
 
     // Testing dependencies
     testImplementation(libs.junit)

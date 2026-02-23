@@ -47,7 +47,9 @@ color call_notification_decline_color
 color darkGray
 color error
 color gray
+color heartRed
 color lightGray
+color lovePink
 color notification_action_color_filter
 color notification_icon_bg_color
 color onBackground
@@ -59,6 +61,7 @@ color primary
 color primaryVariant
 color secondary
 color secondaryVariant
+color softPink
 color success
 color surface
 color transparent
@@ -209,6 +212,7 @@ layout notification_template_custom_big
 layout notification_template_icon_group
 layout notification_template_part_chronometer
 layout notification_template_part_time
+mipmap ic_love
 string androidx_startup
 string app_name
 string backup_failed

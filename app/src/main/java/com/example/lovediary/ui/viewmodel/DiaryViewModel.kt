@@ -1,5 +1,6 @@
 package com.example.lovediary.ui.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.lovediary.data.entity.Diary
@@ -42,6 +43,14 @@ class DiaryViewModel(
     private val _selectedTag = MutableStateFlow<String>("")
     val selectedTag: StateFlow<String> = _selectedTag.asStateFlow()
 
+    // 美图展示页面的描述文字
+    private val _displayDescription = MutableStateFlow<String>("")
+    val displayDescription: StateFlow<String> = _displayDescription.asStateFlow()
+
+    // 美图展示页面的图片URI
+    private val _displayImageUri = MutableStateFlow<Uri?>(null)
+    val displayImageUri: StateFlow<Uri?> = _displayImageUri.asStateFlow()
+
     // 添加日记回调
     var onDiaryAdded: ((String) -> Unit)? = null
 
@@ -49,6 +58,20 @@ class DiaryViewModel(
         loadDiaries()
         loadCategories()
         loadTags()
+    }
+
+    /**
+     * 设置美图展示页面的描述文字
+     */
+    fun setDisplayDescription(description: String) {
+        _displayDescription.value = description
+    }
+
+    /**
+     * 设置美图展示页面的图片URI
+     */
+    fun setDisplayImageUri(uri: Uri?) {
+        _displayImageUri.value = uri
     }
 
     /**

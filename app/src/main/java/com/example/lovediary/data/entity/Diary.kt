@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
  * @property content 日记内容
  * @property createTime 创建时间（ISO格式字符串）
  * @property updateTime 更新时间（ISO格式字符串）
- * @property privacyLevel 隐私等级：0-公开，1-私密，2-加密
+ * @property privacyLevel 隐私等级：0-公开，1-私密
  */
 @Entity(tableName = "diaries")
 data class Diary(

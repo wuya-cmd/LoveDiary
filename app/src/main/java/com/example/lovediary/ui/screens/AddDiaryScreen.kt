@@ -23,15 +23,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -59,9 +63,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -249,7 +255,29 @@ fun AddDiaryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "添加日记") },
+                title = { 
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Favorite,
+                            contentDescription = null,
+                            tint = Color(0xFFFF5FA2),  // 改为粉色
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = "添加日记",
+                            fontWeight = FontWeight.Bold
+                        )
+                        Icon(
+                            imageVector = Icons.Filled.Favorite,
+                            contentDescription = null,
+                            tint = Color(0xFFFF5FA2),  // 改为粉色
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = { goBack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
@@ -280,22 +308,30 @@ fun AddDiaryScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(8.dp)
                 .verticalScroll(rememberScrollState())
         ) {
             // 日记内容
             OutlinedTextField(
                 value = content,
                 onValueChange = { content = it },
-                label = { Text(text = "日记内容") },
-                placeholder = { Text(text = "写下你的心情...") },
+                label = { 
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Spacer(Modifier.width(4.dp))
+                        Text(text = "日记内容")
+                    }
+                },
+                placeholder = { Text(text = "记下美好时光...") },
                 keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp),
-                maxLines = 10
+                maxLines = 10,
+                shape = RoundedCornerShape(12.dp)
             )
 
             // 图片预览区域
@@ -312,7 +348,8 @@ fun AddDiaryScreen(
                                 modifier = Modifier
                                     .size(100.dp)
                                     .clickable { removeImage(imageUri) },
-                                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                                shape = RoundedCornerShape(12.dp)
                             ) {
                                 AsyncImage(
                                     model = imageUri,
@@ -328,11 +365,13 @@ fun AddDiaryScreen(
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
                                     .size(24.dp)
+                                    .clip(CircleShape)
+                                    
                             ) {
                                 Icon(
                                     Icons.AutoMirrored.Filled.ArrowBack,
                                     contentDescription = "删除图片",
-                                    tint = Color.Red
+                                    tint = Color.White
                                 )
                             }
                         }
@@ -345,17 +384,19 @@ fun AddDiaryScreen(
                 onClick = { checkPermissionAndPickImage() },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 8.dp),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Icon(Icons.Filled.Image, contentDescription = "添加图片")
                 Spacer(Modifier.width(8.dp))
-                Text("添加图片")
+                Text("添加回忆图片")
             }
 
             // 时间选择
             Text(
                 text = "日记时间",
                 style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(top = 16.dp)
             )
             
@@ -365,7 +406,8 @@ fun AddDiaryScreen(
                     .padding(vertical = 8.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
+                ),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Column(
                     modifier = Modifier
@@ -376,11 +418,6 @@ fun AddDiaryScreen(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.Lock,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp)
-                        )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = SimpleDateFormat("yyyy年MM月dd日 HH:mm", Locale.getDefault()).format(selectedDate.time),
@@ -394,10 +431,20 @@ fun AddDiaryScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        TextButton(onClick = { showDatePicker = true }) {
+                        TextButton(
+                            onClick = { showDatePicker = true },
+                            colors = androidx.compose.material3.ButtonDefaults.textButtonColors(
+                                contentColor = MaterialTheme.colorScheme.primary
+                            )
+                        ) {
                             Text("修改日期")
                         }
-                        TextButton(onClick = { showTimePicker = true }) {
+                        TextButton(
+                            onClick = { showTimePicker = true },
+                            colors = androidx.compose.material3.ButtonDefaults.textButtonColors(
+                                contentColor = MaterialTheme.colorScheme.primary
+                            )
+                        ) {
                             Text("修改时间")
                         }
                     }
@@ -408,6 +455,7 @@ fun AddDiaryScreen(
             Text(
                 text = "隐私级别",
                 style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(top = 16.dp)
             )
             
@@ -418,7 +466,8 @@ fun AddDiaryScreen(
                     .padding(vertical = 8.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
+                ),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Row(
                     modifier = Modifier
@@ -426,26 +475,15 @@ fun AddDiaryScreen(
                         .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Lock,
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp)
-                    )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Column {
-                        Text(
-                            text = privacyOptions.find { it.value == privacyLevel }?.label ?: "未知",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = privacyOptions.find { it.value == privacyLevel }?.desc ?: "",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
+                    Text(
+                        text = privacyOptions.find { it.value == privacyLevel }?.label ?: "未知",
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
             }
             
-            // 隐私级别选项
+            // 隐私级别选项 - 优化显示方式
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -456,7 +494,7 @@ fun AddDiaryScreen(
                     Card(
                         modifier = Modifier
                             .clickable { privacyLevel = option.value }
-                            .padding(4.dp),
+                            .padding(2.dp),
                         colors = if (option.value == privacyLevel) {
                             CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -465,19 +503,35 @@ fun AddDiaryScreen(
                             CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.surfaceVariant
                             )
-                        }
+                        },
+                        shape = RoundedCornerShape(12.dp)
                     ) {
                         Column(
                             modifier = Modifier.padding(12.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Lock,
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp)
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+//                                Icon(
+//                                    imageVector = if (option.value == 1) Icons.Filled.Lock else Icons.Filled.unlocked,
+//                                    contentDescription = null,
+//                                    modifier = Modifier.size(16.dp),
+//                                    tint = if (option.value == privacyLevel) MaterialTheme.colorScheme.primary else Color.Gray
+//                                )
+                                Text(
+                                    text = option.label,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = if (option.value == privacyLevel) FontWeight.Bold else FontWeight.Normal
+                                )
+                            }
                             Spacer(modifier = Modifier.height(4.dp))
-                            Text(text = option.label)
+                            Text(
+                                text = option.desc,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     }
                 }

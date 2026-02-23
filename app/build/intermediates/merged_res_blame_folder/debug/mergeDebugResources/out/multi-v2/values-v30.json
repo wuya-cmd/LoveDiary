@@ -4,7 +4,7 @@
             "outputFile": "com.example.lovediary.app-mergeDebugResources-58:/values-v30/values-v30.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Administrator\\.gradle\\caches\\8.13\\transforms\\ed0e7119d03f509b79a5f603f7f2053f\\transformed\\material3-release\\res\\values-v30\\values-v30.xml",
+                    "source": "C:\\Users\\Administrator\\.gradle\\caches\\8.13\\transforms\\80bc68faf5b1eec7508c4b5b36a6356c\\transformed\\material3-release\\res\\values-v30\\values-v30.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

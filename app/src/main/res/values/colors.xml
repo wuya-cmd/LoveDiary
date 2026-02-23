@@ -1,16 +1,16 @@
 <resources>
     <!-- Primary colors -->
-    <color name="primary">#FF6B6B</color>
-    <color name="primaryVariant">#FF5252</color>
+    <color name="primary">#FF85A2</color>
+    <color name="primaryVariant">#FF6B81</color>
     <color name="onPrimary">#FFFFFF</color>
     
     <!-- Secondary colors -->
-    <color name="secondary">#4ECDC4</color>
-    <color name="secondaryVariant">#26A69A</color>
+    <color name="secondary">#FFB6C1</color>
+    <color name="secondaryVariant">#FF91A4</color>
     <color name="onSecondary">#FFFFFF</color>
     
     <!-- Background colors -->
-    <color name="background">#F8F9FA</color>
+    <color name="background">#FFF0F5</color>
     <color name="onBackground">#212121</color>
     
     <!-- Surface colors -->
@@ -23,11 +23,16 @@
     
     <!-- Additional colors -->
     <color name="gray">#9E9E9E</color>
-    <color name="lightGray">#EEEEEE</color>
+    <color name="lightGray">#F8F0F5</color>
     <color name="darkGray">#616161</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="transparent">#00000000</color>
     <color name="success">#4CAF50</color>
     <color name="warning">#FFC107</color>
+    
+    <!-- Romantic colors -->
+    <color name="lovePink">#FF6B81</color>
+    <color name="softPink">#FFB6C1</color>
+    <color name="heartRed">#FF1744</color>
 </resources>

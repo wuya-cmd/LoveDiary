@@ -258,21 +258,10 @@ class PrivacyManager(private val context: Context) {
                 )
             } else {
                 // 已验证用户可以看所有内容
-                if (currentAuth == AuthStatus.AUTHORIZED) {
-                    var content = diary.content
-
-                    // 如果是加密内容，需要解密
-                    if (privacyLevel == PrivacyLevels.ENCRYPTED) {
-                        content = decryptText(diary.content)
-                    }
-
-                    diary.copy(
-                        content = content,
-                        privacyLevel = privacyLevel
-                    )
-                } else {
-                    diary
-                }
+                diary.copy(
+                    content = diary.content,
+                    privacyLevel = privacyLevel
+                )
             }
         }
     }
@@ -283,24 +272,15 @@ class PrivacyManager(private val context: Context) {
     fun getPrivacyPlaceholder(privacyLevel: Int): String {
         return when (privacyLevel) {
             PrivacyLevels.PRIVATE -> "🔒 这是一篇私密日记，需要验证身份后查看"
-            PrivacyLevels.ENCRYPTED -> "🔐 这是一篇加密日记，需要验证身份后查看"
             else -> "🔒 受保护的内容"
         }
     }
 
     /**
-     * 处理日记保存（加密私密内容）
+     * 处理日记保存
      */
     fun processDiaryForSave(diary: Diary): Diary {
-        val privacyLevel = diary.privacyLevel
-
-        if (privacyLevel == PrivacyLevels.ENCRYPTED) {
-            return diary.copy(
-                content = encryptText(diary.content),
-                privacyLevel = privacyLevel
-            )
-        }
-
+        // 直接返回日记，不做额外处理
         return diary
     }
 
@@ -318,11 +298,6 @@ class PrivacyManager(private val context: Context) {
                 value = PrivacyLevels.PRIVATE,
                 label = "🔒 私密",
                 desc = "需要验证身份后查看"
-            ),
-            PrivacyOption(
-                value = PrivacyLevels.ENCRYPTED,
-                label = "🔐 加密",
-                desc = "内容加密存储，最高安全级别"
             )
         )
     }

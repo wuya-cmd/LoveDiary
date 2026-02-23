@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background">#F8F9FA</color>
+    <color name="background">#FFF0F5</color>
     <color name="black">#000000</color>
     <color name="darkGray">#616161</color>
     <color name="error">#B00020</color>
     <color name="gray">#9E9E9E</color>
-    <color name="lightGray">#EEEEEE</color>
+    <color name="heartRed">#FF1744</color>
+    <color name="lightGray">#F8F0F5</color>
+    <color name="lovePink">#FF6B81</color>
     <color name="onBackground">#212121</color>
     <color name="onError">#FFFFFF</color>
     <color name="onPrimary">#FFFFFF</color>
     <color name="onSecondary">#FFFFFF</color>
     <color name="onSurface">#212121</color>
-    <color name="primary">#FF6B6B</color>
-    <color name="primaryVariant">#FF5252</color>
-    <color name="secondary">#4ECDC4</color>
-    <color name="secondaryVariant">#26A69A</color>
+    <color name="primary">#FF85A2</color>
+    <color name="primaryVariant">#FF6B81</color>
+    <color name="secondary">#FFB6C1</color>
+    <color name="secondaryVariant">#FF91A4</color>
+    <color name="softPink">#FFB6C1</color>
     <color name="success">#4CAF50</color>
     <color name="surface">#FFFFFF</color>
     <color name="transparent">#00000000</color>
     <color name="warning">#FFC107</color>
     <color name="white">#FFFFFF</color>
-    <string name="app_name">LoveDiary</string>
+    <string name="app_name">朝暮日记</string>
     <string name="backup_failed">备份失败</string>
     <string name="backup_loading">正在备份...</string>
     <string name="backup_success">备份成功</string>
@@ -33,7 +36,7 @@
     <string name="diary_backup_export">导出日记</string>
     <string name="diary_backup_import">导入日记</string>
     <string name="diary_backup_title">备份与恢复</string>
-    <string name="diary_content_hint">写下你的心情...</string>
+    <string name="diary_content_hint">记下你的心情...</string>
     <string name="diary_delete_button">删除</string>
     <string name="diary_edit_title">编辑日记</string>
     <string name="diary_encrypted_content">🔐 这是一篇加密日记，需要验证身份后查看</string>

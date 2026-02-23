@@ -109,7 +109,8 @@ fun LoginScreen(
                     if (password.isNotEmpty()) {
                         val result = viewModel.diaryRepository.privacyManagerPublic.authenticate(password)
                         if (result.isSuccess) {
-                            // 验证成功，返回上一页
+                            // 验证成功，刷新日记列表并返回上一页
+                            viewModel.loadDiaries()
                             navController.popBackStack()
                         } else {
                             errorMessage = "密码错误"

@@ -8,6 +8,7 @@ import com.example.lovediary.security.PrivacyManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 
 /**
  * 日记仓库类
@@ -120,11 +121,43 @@ class DiaryRepository(
     }
 
     /**
-     * 批量插入日记（用于导入）
-     * @param diaries 日记列表
+     * 获取所有日记（原始数据，无隐私过滤），非挂起版本
      */
-    suspend fun insertDiaries(diaries: List<Diary>) {
-        diaryDao.insertDiaries(diaries)
+    fun getAllDiariesRawNonSuspend(): List<Diary> {
+        // 注意：这个方法可能会阻塞线程，应在后台线程调用
+        return runBlocking {
+            diaryDao.getAllDiaries().first()
+        }
+    }
+    
+    /**
+     * 根据日记ID获取图片列表，非挂起版本
+     */
+    fun getImagesByDiaryIdNonSuspend(diaryId: String): List<DiaryImage> {
+        return runBlocking {
+            diaryImageDao.getImagesByDiaryId(diaryId)
+        }
+    }
+    
+    /**
+     * 添加日记，非挂起版本
+     */
+    fun addDiaryNonSuspend(diary: Diary) {
+        runBlocking {
+            // 处理隐私（加密）
+            val processedDiary = privacyManager.processDiaryForSave(diary)
+            // 插入数据库
+            diaryDao.insertDiary(processedDiary)
+        }
+    }
+    
+    /**
+     * 为日记添加图片，非挂起版本
+     */
+    fun addImageToDiaryNonSuspend(diaryId: String, image: DiaryImage) {
+        runBlocking {
+            diaryImageDao.insertImage(image)
+        }
     }
 
     /**

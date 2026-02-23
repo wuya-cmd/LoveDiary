@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.lovediary.app-mergeReleaseResources-47:/values-v30/values-v30.xml",
+            "outputFile": "com.example.lovediary.app-mergeReleaseResources-54:/values-v30/values-v30.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Administrator\\.gradle\\caches\\8.13\\transforms\\91c2ff1383f711a499e42932d6e50dca\\transformed\\material3-release\\res\\values-v30\\values-v30.xml",
+                    "source": "C:\\Users\\Administrator\\.gradle\\caches\\8.13\\transforms\\80bc68faf5b1eec7508c4b5b36a6356c\\transformed\\material3-release\\res\\values-v30\\values-v30.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
