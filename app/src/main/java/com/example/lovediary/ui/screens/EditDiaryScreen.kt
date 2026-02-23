@@ -9,15 +9,22 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -36,6 +43,7 @@ import kotlinx.coroutines.launch
 import com.example.lovediary.data.entity.DiaryImage
 import com.example.lovediary.security.PrivacyManager
 import com.example.lovediary.ui.viewmodel.DiaryViewModel
+import com.example.lovediary.utils.DiaryImageHelper
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -74,6 +82,19 @@ fun EditDiaryScreen(
     // 日记图片相关状态
     var diaryImages by remember { mutableStateOf<List<DiaryImage>>(emptyList()) }
     val newImages = remember { mutableStateListOf<Uri>() }
+    
+    // 待删除的图片列表（延迟删除，只在保存时才真正删除）
+    val pendingDeleteImages = remember { mutableStateListOf<DiaryImage>() }
+    
+    // 多选删除相关状态
+    var isMultiSelectMode by remember { mutableStateOf(false) }
+    val selectedExistingImages = remember { mutableStateListOf<DiaryImage>() }
+    val selectedNewImages = remember { mutableStateListOf<Uri>() }
+    
+    // 删除确认弹窗状态
+    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
+    var pendingDeleteExistingImage by remember { mutableStateOf<DiaryImage?>(null) }
+    var pendingDeleteNewImage by remember { mutableStateOf<Uri?>(null) }
     
     val datePickerState = rememberDatePickerState()
     val timePickerState = rememberTimePickerState()
@@ -145,17 +166,79 @@ fun EditDiaryScreen(
         }
     }
     
-    // 移除新添加的图片
+    // 移除新添加的图片（带确认弹窗）
     fun removeNewImage(uri: Uri) {
-        newImages.remove(uri)
+        if (isMultiSelectMode) {
+            if (selectedNewImages.contains(uri)) {
+                selectedNewImages.remove(uri)
+            } else {
+                selectedNewImages.add(uri)
+            }
+        } else {
+            pendingDeleteNewImage = uri
+            pendingDeleteExistingImage = null
+            showDeleteConfirmDialog = true
+        }
     }
     
-    // 移除已存在的图片
+    // 移除已存在的图片（带确认弹窗）
     fun removeExistingImage(image: DiaryImage) {
-        // 在协程中调用挂起函数
-        viewModel.viewModelScope.launch {
-            viewModel.diaryRepository.deleteImage(image)
+        if (isMultiSelectMode) {
+            if (selectedExistingImages.contains(image)) {
+                selectedExistingImages.remove(image)
+            } else {
+                selectedExistingImages.add(image)
+            }
+        } else {
+            pendingDeleteExistingImage = image
+            pendingDeleteNewImage = null
+            showDeleteConfirmDialog = true
+        }
+    }
+    
+    /**
+     * 确认删除单个图片
+     * 只从UI列表移除，不立即删除数据库记录
+     * 真正的删除操作在保存时执行
+     */
+    fun confirmDeleteSingleImage() {
+        pendingDeleteExistingImage?.let { image ->
+            // 将图片添加到待删除列表
+            pendingDeleteImages.add(image)
+            // 从UI列表移除
             diaryImages = diaryImages.filter { it.id != image.id }
+        }
+        pendingDeleteNewImage?.let { uri ->
+            newImages.remove(uri)
+        }
+        pendingDeleteExistingImage = null
+        pendingDeleteNewImage = null
+        showDeleteConfirmDialog = false
+    }
+    
+    /**
+     * 批量删除选中的图片
+     * 只从UI列表移除，不立即删除数据库记录
+     * 真正的删除操作在保存时执行
+     */
+    fun deleteSelectedImages() {
+        // 将选中的已存在图片添加到待删除列表
+        pendingDeleteImages.addAll(selectedExistingImages)
+        // 从UI列表移除
+        diaryImages = diaryImages.filter { !selectedExistingImages.contains(it) }
+        newImages.removeAll(selectedNewImages)
+        
+        selectedExistingImages.clear()
+        selectedNewImages.clear()
+        isMultiSelectMode = false
+    }
+    
+    // 切换多选模式
+    fun toggleMultiSelectMode() {
+        isMultiSelectMode = !isMultiSelectMode
+        if (!isMultiSelectMode) {
+            selectedExistingImages.clear()
+            selectedNewImages.clear()
         }
     }
 
@@ -236,16 +319,25 @@ fun EditDiaryScreen(
                                 // 格式化日期为ISO格式
                                 val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
                                 val dateTime = dateFormat.format(selectedDate.time)
-                                currentDiary?.let {
-                                    viewModel.updateDiaryWithCreateTime(it.id, content, "默认分类", "", privacyLevel, dateTime)
+                                currentDiary?.let { diary ->
+                                    viewModel.updateDiaryWithCreateTime(diary.id, content, "默认分类", "", privacyLevel, dateTime)
                                     
-                                    // 保存新增的图片
-                                    if (newImages.isNotEmpty()) {
-                                        // 这里应该调用一个方法来保存新图片
-                                        // 但由于这是一个复杂的操作，我们在实际应用中可能需要重构这部分代码
+                                    // 在协程中执行图片的删除和新增操作
+                                    viewModel.viewModelScope.launch {
+                                        // 删除待删除的图片
+                                        if (pendingDeleteImages.isNotEmpty()) {
+                                            pendingDeleteImages.forEach { image ->
+                                                viewModel.diaryRepository.deleteImage(image)
+                                            }
+                                        }
+                                        
+                                        // 保存新增的图片
+                                        if (newImages.isNotEmpty()) {
+                                            DiaryImageHelper.saveDiaryImages(context, viewModel, diary.id, newImages.toList())
+                                        }
+                                        
+                                        navController.popBackStack()
                                     }
-                                    
-                                    navController.popBackStack()
                                 }
                             }
                         },
@@ -280,18 +372,79 @@ fun EditDiaryScreen(
             
             // 图片预览区域
             if (diaryImages.isNotEmpty() || newImages.isNotEmpty()) {
+                // 多选模式工具栏
+                if (isMultiSelectMode) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            TextButton(onClick = { toggleMultiSelectMode() }) {
+                                Icon(Icons.Filled.Close, contentDescription = "取消")
+                                Spacer(Modifier.width(4.dp))
+                                Text("取消选择")
+                            }
+                            
+                            val totalSelected = selectedExistingImages.size + selectedNewImages.size
+                            Text(
+                                text = "已选择 $totalSelected 张",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            
+                            if (totalSelected > 0) {
+                                TextButton(
+                                    onClick = {
+                                        pendingDeleteExistingImage = null
+                                        pendingDeleteNewImage = null
+                                        showDeleteConfirmDialog = true
+                                    }
+                                ) {
+                                    Icon(Icons.Filled.Delete, contentDescription = "删除")
+                                    Spacer(Modifier.width(4.dp))
+                                    Text("删除")
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // 开启多选模式按钮
+                if (!isMultiSelectMode && (diaryImages.size + newImages.size) > 1) {
+                    TextButton(
+                        onClick = { toggleMultiSelectMode() },
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    ) {
+                        Icon(Icons.Outlined.Circle, contentDescription = "多选")
+                        Spacer(Modifier.width(4.dp))
+                        Text("多选删除")
+                    }
+                }
+                
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                        .padding(vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     // 显示已有图片
                     items(diaryImages) { image ->
-                        Box {
+                        val isSelected = selectedExistingImages.contains(image)
+                        Box(
+                            modifier = Modifier.size(100.dp)
+                        ) {
                             Card(
                                 modifier = Modifier
-                                    .size(100.dp)
+                                    .fillMaxSize()
                                     .clickable { removeExistingImage(image) },
                                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                             ) {
@@ -303,28 +456,58 @@ fun EditDiaryScreen(
                                 )
                             }
                             
-                            // 删除按钮
-                            IconButton(
-                                onClick = { removeExistingImage(image) },
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .size(24.dp)
-                            ) {
-                                Icon(
-                                    Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "删除图片",
-                                    tint = Color.Red
+                            // 多选模式下显示选择指示器
+                            if (isMultiSelectMode) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .then(
+                                            if (isSelected) {
+                                                Modifier.background(
+                                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+                                                )
+                                            } else {
+                                                Modifier
+                                            }
+                                        )
                                 )
+                                
+                                Icon(
+                                    imageVector = if (isSelected) Icons.Filled.CheckCircle else Icons.Outlined.Circle,
+                                    contentDescription = if (isSelected) "已选择" else "未选择",
+                                    tint = if (isSelected) MaterialTheme.colorScheme.primary else Color.White,
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .padding(4.dp)
+                                        .size(24.dp)
+                                )
+                            } else {
+                                // 单选模式下显示删除按钮
+                                IconButton(
+                                    onClick = { removeExistingImage(image) },
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .size(24.dp)
+                                ) {
+                                    Icon(
+                                        Icons.Filled.Delete,
+                                        contentDescription = "删除图片",
+                                        tint = Color.Red
+                                    )
+                                }
                             }
                         }
                     }
                     
                     // 显示新添加的图片
                     items(newImages) { imageUri ->
-                        Box {
+                        val isSelected = selectedNewImages.contains(imageUri)
+                        Box(
+                            modifier = Modifier.size(100.dp)
+                        ) {
                             Card(
                                 modifier = Modifier
-                                    .size(100.dp)
+                                    .fillMaxSize()
                                     .clickable { removeNewImage(imageUri) },
                                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                             ) {
@@ -336,18 +519,45 @@ fun EditDiaryScreen(
                                 )
                             }
                             
-                            // 删除按钮
-                            IconButton(
-                                onClick = { removeNewImage(imageUri) },
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .size(24.dp)
-                            ) {
-                                Icon(
-                                    Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "删除图片",
-                                    tint = Color.Red
+                            // 多选模式下显示选择指示器
+                            if (isMultiSelectMode) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .then(
+                                            if (isSelected) {
+                                                Modifier.background(
+                                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+                                                )
+                                            } else {
+                                                Modifier
+                                            }
+                                        )
                                 )
+                                
+                                Icon(
+                                    imageVector = if (isSelected) Icons.Filled.CheckCircle else Icons.Outlined.Circle,
+                                    contentDescription = if (isSelected) "已选择" else "未选择",
+                                    tint = if (isSelected) MaterialTheme.colorScheme.primary else Color.White,
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .padding(4.dp)
+                                        .size(24.dp)
+                                )
+                            } else {
+                                // 单选模式下显示删除按钮
+                                IconButton(
+                                    onClick = { removeNewImage(imageUri) },
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .size(24.dp)
+                                ) {
+                                    Icon(
+                                        Icons.Filled.Delete,
+                                        contentDescription = "删除图片",
+                                        tint = Color.Red
+                                    )
+                                }
                             }
                         }
                     }
@@ -499,5 +709,56 @@ fun EditDiaryScreen(
                 }
             }
         }
+    }
+    
+    // 删除确认弹窗
+    if (showDeleteConfirmDialog) {
+        val isMultiDelete = isMultiSelectMode && 
+            (selectedExistingImages.isNotEmpty() || selectedNewImages.isNotEmpty())
+        
+        AlertDialog(
+            onDismissRequest = { 
+                showDeleteConfirmDialog = false
+                pendingDeleteExistingImage = null
+                pendingDeleteNewImage = null
+            },
+            title = { 
+                Text(if (isMultiDelete) "确认删除多张图片" else "确认删除图片") 
+            },
+            text = { 
+                if (isMultiDelete) {
+                    val total = selectedExistingImages.size + selectedNewImages.size
+                    Text("确定要删除选中的 $total 张图片吗？此操作无法撤销。")
+                } else {
+                    Text("确定要删除这张图片吗？此操作无法撤销。")
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        if (isMultiDelete) {
+                            deleteSelectedImages()
+                        } else {
+                            confirmDeleteSingleImage()
+                        }
+                        showDeleteConfirmDialog = false
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("删除")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { 
+                    showDeleteConfirmDialog = false
+                    pendingDeleteExistingImage = null
+                    pendingDeleteNewImage = null
+                }) {
+                    Text("取消")
+                }
+            }
+        )
     }
 }

@@ -1,5 +1,9 @@
 package com.example.lovediary.ui.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -9,6 +13,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
@@ -17,9 +22,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.lovediary.R
@@ -30,6 +41,8 @@ import com.example.lovediary.ui.viewmodel.DiaryViewModel
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * 日记详情屏幕
@@ -48,6 +61,10 @@ fun DiaryDetailScreen(
     
     // 日记图片列表
     var diaryImages by remember { mutableStateOf<List<DiaryImage>>(emptyList()) }
+    
+    // 图片查看器状态
+    var selectedImageIndex by remember { mutableStateOf<Int?>(null) }
+    var showImageViewer by remember { mutableStateOf(false) }
     
     // 加载日记图片
     LaunchedEffect(currentDiary) {
@@ -124,7 +141,11 @@ fun DiaryDetailScreen(
                                 .fillMaxWidth()
                                 .aspectRatio(1.5f)
                                 .padding(8.dp)
-                                .clip(RoundedCornerShape(16.dp)),
+                                .clip(RoundedCornerShape(16.dp))
+                                .clickable {
+                                    selectedImageIndex = 0
+                                    showImageViewer = true
+                                },
                             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                         ) {
                             AsyncImage(
@@ -151,15 +172,19 @@ fun DiaryDetailScreen(
                         LazyRow(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 8.dp, vertical = 4.dp),  // 减少内边距
-                                // 从horizontal = 16.dp, vertical = 8.dp改为horizontal = 8.dp, vertical = 4.dp
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            items(diaryImages.drop(1)) { image ->  // 跳过第一张主图
+                            items(diaryImages.drop(1)) { image ->
+                                val imageIndex = diaryImages.indexOf(image)
                                 Card(
                                     modifier = Modifier
                                         .size(100.dp)
-                                        .clip(RoundedCornerShape(8.dp)),
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .clickable {
+                                            selectedImageIndex = imageIndex
+                                            showImageViewer = true
+                                        },
                                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                                 ) {
                                     AsyncImage(
@@ -256,6 +281,15 @@ fun DiaryDetailScreen(
             }
         )
     }
+    
+    // 图片查看器对话框
+    if (showImageViewer && selectedImageIndex != null && diaryImages.isNotEmpty()) {
+        ImageViewerDialog(
+            images = diaryImages,
+            initialIndex = selectedImageIndex!!,
+            onDismiss = { showImageViewer = false }
+        )
+    }
 }
 
 /**
@@ -269,5 +303,147 @@ fun formatDateTime(dateTime: String): String {
         outputFormat.format(date ?: Date())
     } catch (e: Exception) {
         dateTime
+    }
+}
+
+/**
+ * 全屏图片查看器对话框
+ * 支持缩放、平移和滑动切换图片
+ */
+@Composable
+fun ImageViewerDialog(
+    images: List<DiaryImage>,
+    initialIndex: Int,
+    onDismiss: () -> Unit
+) {
+    var currentIndex by remember { mutableStateOf(initialIndex) }
+    var scale by remember { mutableStateOf(1f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+    
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.9f))
+        ) {
+            // 关闭按钮
+            IconButton(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "关闭",
+                    tint = Color.White,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+            
+            // 图片计数器
+            Text(
+                text = "${currentIndex + 1} / ${images.size}",
+                color = Color.White,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 24.dp)
+            )
+            
+            // 图片显示区域
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        detectTransformGestures { _, pan, zoom, _ ->
+                            scale = max(0.5f, min(scale * zoom, 5f))
+                            offset = Offset(
+                                x = offset.x + pan.x,
+                                y = offset.y + pan.y
+                            )
+                        }
+                    }
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onDoubleTap = {
+                                scale = if (scale != 1f) 1f else 2f
+                                offset = Offset.Zero
+                            },
+                            onTap = {
+                                if (scale == 1f) {
+                                    onDismiss()
+                                }
+                            }
+                        )
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                AsyncImage(
+                    model = File(images[currentIndex].imagePath),
+                    contentDescription = "图片查看",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer(
+                            scaleX = scale,
+                            scaleY = scale,
+                            translationX = offset.x,
+                            translationY = offset.y
+                        ),
+                    contentScale = ContentScale.Fit
+                )
+            }
+            
+            // 左右切换按钮
+            if (images.size > 1) {
+                // 上一张按钮
+                if (currentIndex > 0) {
+                    IconButton(
+                        onClick = {
+                            currentIndex--
+                            scale = 1f
+                            offset = Offset.Zero
+                        },
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .padding(start = 16.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "上一张",
+                            tint = Color.White,
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
+                }
+                
+                // 下一张按钮
+                if (currentIndex < images.size - 1) {
+                    IconButton(
+                        onClick = {
+                            currentIndex++
+                            scale = 1f
+                            offset = Offset.Zero
+                        },
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .padding(end = 16.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "下一张",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .graphicsLayer(rotationZ = 180f)
+                        )
+                    }
+                }
+            }
+        }
     }
 }
