@@ -4,6 +4,7 @@ import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.example.lovediary.data.entity.Diary
@@ -208,7 +209,7 @@ class PrivacyManager(private val context: Context) {
             val combined = iv + encryptedBytes
             return "encrypted:${Base64.encodeToString(combined, Base64.NO_WRAP)}"
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("PrivacyManager", "加密失败", e)
             return text
         }
     }
@@ -236,7 +237,7 @@ class PrivacyManager(private val context: Context) {
             val decryptedBytes = cipher.doFinal(encryptedBytes)
             return String(decryptedBytes)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("PrivacyManager", "解密失败", e)
             return "[加密内容解析失败]"
         }
     }

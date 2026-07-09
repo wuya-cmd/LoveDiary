@@ -36,7 +36,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun LoveDiaryTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+ and iOS 16+
+    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {

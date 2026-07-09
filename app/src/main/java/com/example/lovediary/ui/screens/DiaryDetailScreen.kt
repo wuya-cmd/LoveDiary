@@ -163,8 +163,7 @@ fun DiaryDetailScreen(
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 8.dp, vertical = 4.dp)  // 减少内边距
-                            // 从horizontal = 16.dp, vertical = 8.dp改为horizontal = 8.dp, vertical = 4.dp
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
                     )
                     
                     // 显示日记图片列表
@@ -204,7 +203,7 @@ fun DiaryDetailScreen(
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(8.dp),  // 从16.dp减少到8.dp
+                                .padding(8.dp),
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer
                             ),
@@ -231,8 +230,7 @@ fun DiaryDetailScreen(
                         color = MaterialTheme.colorScheme.outline,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 8.dp, vertical = 1.dp)  // 减少垂直内边距
-                            // 从horizontal = 16.dp, vertical = 2.dp改为horizontal = 8.dp, vertical = 1.dp
+                            .padding(horizontal = 8.dp, vertical = 1.dp)
                     )
 
                     // 更新时间
@@ -242,8 +240,7 @@ fun DiaryDetailScreen(
                         color = MaterialTheme.colorScheme.outline,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 8.dp, vertical = 1.dp)  // 减少垂直内边距
-                            // 从horizontal = 16.dp, vertical = 2.dp改为horizontal = 8.dp, vertical = 1.dp
+                            .padding(horizontal = 8.dp, vertical = 1.dp)
                     )
                 } ?: run {
                     Text(

@@ -1,6 +1,7 @@
 package com.example.lovediary.utils
 
 import android.content.Context
+import android.util.Log
 import com.example.lovediary.data.entity.Diary
 import com.example.lovediary.data.entity.DiaryImage
 import com.example.lovediary.data.repository.DiaryRepository
@@ -82,7 +83,7 @@ class LinxiSyncManager(
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("LinxiSyncManager", "等待连接失败", e)
                 withContext(Dispatchers.Main) {
                     callback.onComplete(false, "等待连接失败: ${e.message}")
                 }
@@ -113,7 +114,7 @@ class LinxiSyncManager(
                 
                 handleSync(socket)
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("LinxiSyncManager", "连接对方失败", e)
                 withContext(Dispatchers.Main) {
                     callback.onComplete(false, "连接对方失败: ${e.message}，请确保对方已在等待连接且网络畅通")
                 }
@@ -148,7 +149,7 @@ class LinxiSyncManager(
                 syncCallback?.onComplete(true, "同步完成，数据已更新")
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("LinxiSyncManager", "同步失败", e)
             withContext(Dispatchers.Main) {
                 syncCallback?.onComplete(false, "同步失败: ${e.message}")
             }
@@ -265,27 +266,27 @@ class LinxiSyncManager(
                     imageJson.put("format", image.format)
                     
                     try {
-                        val imageFile = File(image.imagePath)
-                        if (imageFile.exists()) {
-                            val bytes = imageFile.readBytes()
-                            val base64 = android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP)
-                            imageJson.put("base64Data", base64)
+                            val imageFile = File(image.imagePath)
+                            if (imageFile.exists()) {
+                                val bytes = imageFile.readBytes()
+                                val base64 = android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP)
+                                imageJson.put("base64Data", base64)
+                            }
+                        } catch (e: Exception) {
+                            Log.e("LinxiSyncManager", "读取图片失败", e)
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                        
+                        imagesArray.put(imageJson)
                     }
                     
-                    imagesArray.put(imageJson)
-                }
-                
-                diaryJson.put("images", imagesArray)
-                
-                val dataToSend = diaryJson.toString()
-                outputStream.write(dataToSend.toByteArray())
-                outputStream.write("\n".toByteArray())
-                outputStream.flush()
+                    diaryJson.put("images", imagesArray)
+                    
+                    val dataToSend = diaryJson.toString()
+                    outputStream.write(dataToSend.toByteArray())
+                    outputStream.write("\n".toByteArray())
+                    outputStream.flush()
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("LinxiSyncManager", "发送日记失败", e)
             }
             
             withContext(Dispatchers.Main) {
@@ -358,7 +359,7 @@ class LinxiSyncManager(
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("LinxiSyncManager", "接收日记失败", e)
             }
             
             withContext(Dispatchers.Main) {
@@ -388,7 +389,7 @@ class LinxiSyncManager(
             clientSocket?.close()
             serverSocket?.close()
         } catch (e: IOException) {
-            e.printStackTrace()
+            Log.e("LinxiSyncManager", "关闭Socket失败", e)
         }
         
         clientSocket = null

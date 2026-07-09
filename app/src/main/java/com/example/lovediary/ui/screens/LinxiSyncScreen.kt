@@ -40,7 +40,7 @@ fun LinxiSyncScreen(
     var syncMessage by remember { mutableStateOf("准备就绪") }
     var progress by remember { mutableStateOf(Pair(0, 0)) } // current to total
     var hostMode by remember { mutableStateOf(false) }
-    var clientIpAddress by remember { mutableStateOf("" as String) }
+    var clientIpAddress by remember { mutableStateOf("") }
     
     // 初始化时获取本地IP地址
     LaunchedEffect(Unit) {
@@ -352,7 +352,7 @@ fun LinxiSyncScreen(
 
     // IP地址输入对话框
     if (showIpDialog) {
-        var ipInput by remember { mutableStateOf("" as String) }
+        var ipInput by remember { mutableStateOf("") }
         
         AlertDialog(
             onDismissRequest = { showIpDialog = false },
@@ -418,7 +418,7 @@ private fun getLocalIpAddressFunc(): String {
             }
         }
     } catch (ex: Exception) {
-        ex.printStackTrace()
+        android.util.Log.e("LinxiSyncScreen", "获取IP地址失败", ex)
     }
     return ""
 }

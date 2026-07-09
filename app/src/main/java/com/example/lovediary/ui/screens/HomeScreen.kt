@@ -144,7 +144,6 @@ fun HomeScreen(
         // 2. 把 TopAppBar 高度压到 56 dp（或 48 dp）
         topBar = {
             TopAppBar(
-                //modifier = Modifier.height(56.dp),          // ← 关键
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         // 左侧爱心
@@ -679,11 +678,6 @@ private fun exportDiaries(context: Context, viewModel: DiaryViewModel) {
                         "导出成功: $filePath",
                         Toast.LENGTH_LONG
                     ).show()
-//                    Toast.makeText(
-//                        context,
-//                        "请在文件管理器中查看",
-//                        Toast.LENGTH_LONG
-//                    ).show()
                 } else {
                     Toast.makeText(
                         context,
@@ -698,9 +692,8 @@ private fun exportDiaries(context: Context, viewModel: DiaryViewModel) {
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            android.util.Log.e("HomeScreen", "导出失败", e)
             
-            // 在主线程中显示错误
             CoroutineScope(Dispatchers.Main).launch {
                 Toast.makeText(
                     context,
@@ -720,7 +713,6 @@ private fun importDiariesFromFile(context: Context, viewModel: DiaryViewModel, f
         try {
             val backupManager = BackupManager(context, viewModel.diaryRepository)
             
-            // 将Uri文件复制到临时文件
             val tempFile = File.createTempFile("import_", ".json", context.cacheDir)
             context.contentResolver.openInputStream(fileUri)?.use { input ->
                 tempFile.outputStream().use { output ->
@@ -730,10 +722,8 @@ private fun importDiariesFromFile(context: Context, viewModel: DiaryViewModel, f
             
             val result = backupManager.importDiaries(tempFile.absolutePath)
             
-            // 删除临时文件
             tempFile.delete()
             
-            // 在主线程中显示结果
             CoroutineScope(Dispatchers.Main).launch {
                 Toast.makeText(
                     context,
@@ -741,13 +731,11 @@ private fun importDiariesFromFile(context: Context, viewModel: DiaryViewModel, f
                     Toast.LENGTH_LONG
                 ).show()
                 
-                // 刷新日记列表
                 viewModel.loadDiaries()
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            android.util.Log.e("HomeScreen", "导入失败", e)
             
-            // 在主线程中显示错误
             CoroutineScope(Dispatchers.Main).launch {
                 Toast.makeText(
                     context,
@@ -767,7 +755,6 @@ private fun importMiniProgramDiaries(context: Context, viewModel: DiaryViewModel
         try {
             val backupManager = BackupManager(context, viewModel.diaryRepository)
             
-            // 将Uri文件复制到临时文件并收集路径
             val tempFilePaths = mutableListOf<String>()
             fileUris.forEach { uri ->
                 try {
@@ -780,22 +767,20 @@ private fun importMiniProgramDiaries(context: Context, viewModel: DiaryViewModel
                     }
                     tempFilePaths.add(tempFile.absolutePath)
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    android.util.Log.e("HomeScreen", "复制临时文件失败", e)
                 }
             }
             
             val result = backupManager.importMiniProgramDiaries(tempFilePaths)
             
-            // 删除临时文件
             tempFilePaths.forEach { path ->
                 try {
                     File(path).delete()
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    android.util.Log.e("HomeScreen", "删除临时文件失败", e)
                 }
             }
             
-            // 在主线程中显示结果
             CoroutineScope(Dispatchers.Main).launch {
                 Toast.makeText(
                     context,
@@ -803,13 +788,11 @@ private fun importMiniProgramDiaries(context: Context, viewModel: DiaryViewModel
                     Toast.LENGTH_LONG
                 ).show()
                 
-                // 刷新日记列表
                 viewModel.loadDiaries()
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            android.util.Log.e("HomeScreen", "小程序导入失败", e)
             
-            // 在主线程中显示错误
             CoroutineScope(Dispatchers.Main).launch {
                 Toast.makeText(
                     context,

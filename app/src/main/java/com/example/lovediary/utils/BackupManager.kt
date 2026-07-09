@@ -522,8 +522,7 @@ class BackupManager(
                             diaryRepository.addImageToDiary(diary.id, diaryImage)
                             imageCount++
                         } catch (e: Exception) {
-                            e.printStackTrace()
-                            // 单个图片失败不影响整个日记导入
+                            Log.e("BackupManager", "处理小程序图片失败", e)
                         }
                     }
                 }
@@ -535,7 +534,7 @@ class BackupManager(
                     imageCount = imageCount
                 )
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("BackupManager", "导入小程序日记失败", e)
                 return@withContext ImportResult(
                     successCount = 0,
                     failedCount = 1,
@@ -564,7 +563,7 @@ class BackupManager(
                 failedCount += result.failedCount
                 imageCount += result.imageCount
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("BackupManager", "批量导入小程序日记失败", e)
                 failedCount++
             }
         }

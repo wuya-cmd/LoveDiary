@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
+import android.util.Log
 import androidx.exifinterface.media.ExifInterface
 import java.io.File
 import java.io.FileOutputStream
@@ -39,7 +40,7 @@ object ImageCompressor {
             // 压缩并保存
             compressAndSaveImage(rotatedBitmap, outputFile)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("ImageCompressor", "压缩图片失败", e)
             false
         }
     }
@@ -69,7 +70,7 @@ object ImageCompressor {
 
             bitmap
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("ImageCompressor", "解码图片失败", e)
             null
         }
     }
@@ -104,7 +105,7 @@ object ImageCompressor {
             inputStream.close()
             orientation
         } catch (e: IOException) {
-            e.printStackTrace()
+            Log.e("ImageCompressor", "获取图片方向失败", e)
             0
         }
     }
@@ -142,7 +143,7 @@ object ImageCompressor {
                     quality -= 10
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("ImageCompressor", "保存图片失败", e)
                 break
             }
         }
