@@ -514,12 +514,6 @@ fun AddDiaryScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
-//                                Icon(
-//                                    imageVector = if (option.value == 1) Icons.Filled.Lock else Icons.Filled.unlocked,
-//                                    contentDescription = null,
-//                                    modifier = Modifier.size(16.dp),
-//                                    tint = if (option.value == privacyLevel) MaterialTheme.colorScheme.primary else Color.Gray
-//                                )
                                 Text(
                                     text = option.label,
                                     style = MaterialTheme.typography.bodyMedium,

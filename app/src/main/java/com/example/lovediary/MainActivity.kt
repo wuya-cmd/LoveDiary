@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
         val db = Room.databaseBuilder(
             applicationContext,
             DiaryDatabase::class.java,
-            "diary_database"
+            "love_diary_database"
         ).build()
         
         // 初始化DAO

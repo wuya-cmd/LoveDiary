@@ -665,11 +665,6 @@ fun EditDiaryScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
-//                                Icon(
-//                                    imageVector = Icons.Default.Lock,
-//                                    contentDescription = null,
-//                                    modifier = Modifier.size(20.dp)
-//                                )
                                 Text(
                                     text = option.label,
                                     style = MaterialTheme.typography.bodyMedium

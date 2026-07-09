@@ -64,11 +64,6 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    
-    // 增加DEX选项以支持更多方法数
-    dexOptions {
-        javaMaxHeapSize = "4g"
-    }
 }
 
 dependencies {

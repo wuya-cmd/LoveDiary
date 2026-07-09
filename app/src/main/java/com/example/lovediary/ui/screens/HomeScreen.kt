@@ -97,10 +97,6 @@ fun HomeScreen(
     viewModel: DiaryViewModel
 ) {
     val diaries by viewModel.diaries.collectAsState()
-//    val categories by viewModel.categories.collectAsState()
-//    val tags by viewModel.tags.collectAsState()
-//    val selectedCategory by viewModel.selectedCategory.collectAsState()
-//    val selectedTag by viewModel.selectedTag.collectAsState()
     val context = LocalContext.current
     
     // 存储每个日记的图片列表
@@ -241,13 +237,6 @@ fun HomeScreen(
                     }) {
                         Icon(Icons.Filled.Sync, contentDescription = "灵犀同步", modifier = Modifier.size(20.dp))
                     }
-//                    // 导入小程序备份按钮
-//                    IconButton(onClick = {
-//                        // 启动多文件选择器
-//                        multipleFilePickerLauncher.launch(arrayOf("*/*"))
-//                    }) {
-//                        Icon(Icons.Filled.FileDownload, contentDescription = "导入小程序备份", modifier = Modifier.size(20.dp))
-//                    }
                 }
             )
         }
@@ -365,12 +354,6 @@ fun HomeScreen(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-//                        Icon(
-//                            imageVector = Icons.Filled.Favorite,
-//                            contentDescription = null,
-//                            tint = Color.Red,
-//                            modifier = Modifier.size(16.dp)
-//                        )
                         Spacer(Modifier.width(4.dp))
                         Text(
                             text = if (anniversaryDate != null) {
@@ -384,12 +367,6 @@ fun HomeScreen(
                             fontSize = MaterialTheme.typography.bodyMedium.fontSize.times(1.5f)
                         )
                         Spacer(Modifier.width(4.dp))
-//                        Icon(
-//                            imageVector = Icons.Filled.Favorite,
-//                            contentDescription = null,
-//                            tint = Color.Red,
-//                            modifier = Modifier.size(16.dp)
-//                        )
                     }
                 }
                 
