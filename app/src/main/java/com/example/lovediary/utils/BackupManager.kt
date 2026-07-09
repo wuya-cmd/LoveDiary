@@ -215,9 +215,10 @@ class BackupManager(
                                 Log.d("BackupManager", "Total count reported: $totalCount")
                             }
                             "diaries" -> {
-                                // 处理日记数组
                                 if (parser.currentToken() == JsonToken.START_ARRAY) {
-                                    successCount = processDiariesArray(parser, imageCount)
+                                    val (success, images) = processDiariesArray(parser)
+                                    successCount = success
+                                    imageCount = images
                                 }
                             }
                             else -> {
@@ -249,11 +250,11 @@ class BackupManager(
     /**
      * 处理日记数组
      */
-    private suspend fun processDiariesArray(parser: JsonParser, imageCount: Int): Int {
+    private suspend fun processDiariesArray(parser: JsonParser): Pair<Int, Int> {
         var successCount = 0
+        var imageCount = 0
         var batchCount = 0
         
-        // 处理数组中的每个日记对象
         while (parser.nextToken() != JsonToken.END_ARRAY) {
             if (parser.currentToken() == JsonToken.START_OBJECT) {
                 try {
@@ -261,27 +262,20 @@ class BackupManager(
                     if (diaryData != null) {
                         val (diary, images) = diaryData
                         
-                        // 处理日记
                         val processedDiary = diaryRepository.privacyManagerPublic.processDiaryForSave(diary)
                         
-                        // 检查日记是否已存在
                         val existingDiary = diaryRepository.getDiaryById(diary.id)
                         if (existingDiary != null) {
-                            // 日记已存在，跳过
                             Log.d("BackupManager", "Diary with id ${diary.id} already exists, skipping")
                         } else {
-                            // 添加日记
                             diaryRepository.addDiary(processedDiary)
                             Log.d("BackupManager", "Successfully imported diary with id: ${diary.id}")
                             successCount++
                             
-                            // 处理图片
                             for (imageData in images) {
                                 try {
-                                    // 将Base64转换为图片文件
                                     val imagePath = convertBase64ToImage(imageData.base64Data, imageData.fileName)
                                     
-                                    // 创建图片对象
                                     val diaryImage = DiaryImage(
                                         id = "image_${System.currentTimeMillis()}_${imageCount}",
                                         diaryId = processedDiary.id,
@@ -294,9 +288,8 @@ class BackupManager(
                                         format = imageData.format
                                     )
                                     
-                                    // 添加图片
-                                    diaryRepository.addImageToDiary(diary.id, diaryImage)
-                                    // 注意：这里我们不增加imageCount，因为在函数签名中它是val
+                                    diaryRepository.addImageToDiary(processedDiary.id, diaryImage)
+                                    imageCount++
                                 } catch (e: Exception) {
                                     Log.e("BackupManager", "Error processing image for diary ${diary.id}: ${e.message}", e)
                                 }
@@ -305,7 +298,6 @@ class BackupManager(
                     }
                     
                     batchCount++
-                    // 每处理50个日记就输出一次日志并触发GC
                     if (batchCount % 50 == 0) {
                         Log.d("BackupManager", "Processed $batchCount diaries so far. Triggering GC.")
                         System.gc()
@@ -316,7 +308,7 @@ class BackupManager(
             }
         }
         
-        return successCount
+        return Pair(successCount, imageCount)
     }
     
     /**

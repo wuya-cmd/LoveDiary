@@ -10,7 +10,6 @@ import org.json.JSONObject
 import java.io.*
 import java.net.*
 import java.util.*
-import kotlin.concurrent.thread
 
 /**
  * 灵犀同步管理器
@@ -25,6 +24,8 @@ class LinxiSyncManager(
         const val PORT = 8888
         const val SOCKET_TIMEOUT = 30000
     }
+
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     enum class SyncRole {
         HOST, CLIENT, NONE
@@ -61,28 +62,30 @@ class LinxiSyncManager(
         currentSyncRole = SyncRole.HOST
         isSyncActive = true
         
-        thread {
+        scope.launch {
             try {
-                callback.onStatusChanged(SyncStatus.CONNECTING)
+                withContext(Dispatchers.Main) {
+                    callback.onStatusChanged(SyncStatus.CONNECTING)
+                }
                 
-                // 启动服务器Socket
                 serverSocket = ServerSocket(PORT)
                 serverSocket?.soTimeout = SOCKET_TIMEOUT
                 
-                callback.onStatusChanged(SyncStatus.CONNECTING)
-                
-                // 等待客户端连接
                 val socket = serverSocket?.accept()
                 clientSocket = socket
                 
                 if (socket != null) {
                     handleSync(socket)
                 } else {
-                    callback.onComplete(false, "连接失败")
+                    withContext(Dispatchers.Main) {
+                        callback.onComplete(false, "连接失败")
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                callback.onComplete(false, "等待连接失败: ${e.message}")
+                withContext(Dispatchers.Main) {
+                    callback.onComplete(false, "等待连接失败: ${e.message}")
+                }
             } finally {
                 cleanup()
             }
@@ -97,11 +100,12 @@ class LinxiSyncManager(
         currentSyncRole = SyncRole.CLIENT
         isSyncActive = true
         
-        thread {
+        scope.launch {
             try {
-                callback.onStatusChanged(SyncStatus.CONNECTING)
+                withContext(Dispatchers.Main) {
+                    callback.onStatusChanged(SyncStatus.CONNECTING)
+                }
                 
-                // 连接到主机
                 val socket = Socket()
                 val address = InetSocketAddress(hostIp, PORT)
                 socket.connect(address, SOCKET_TIMEOUT)
@@ -110,7 +114,9 @@ class LinxiSyncManager(
                 handleSync(socket)
             } catch (e: Exception) {
                 e.printStackTrace()
-                callback.onComplete(false, "连接对方失败: ${e.message}，请确保对方已在等待连接且网络畅通")
+                withContext(Dispatchers.Main) {
+                    callback.onComplete(false, "连接对方失败: ${e.message}，请确保对方已在等待连接且网络畅通")
+                }
             } finally {
                 cleanup()
             }
@@ -120,37 +126,41 @@ class LinxiSyncManager(
     /**
      * 处理同步过程
      */
-    private fun handleSync(socket: Socket) {
+    private suspend fun handleSync(socket: Socket) {
         try {
-            syncCallback?.onStatusChanged(SyncStatus.EXCHANGING_INDEX)
+            withContext(Dispatchers.Main) {
+                syncCallback?.onStatusChanged(SyncStatus.EXCHANGING_INDEX)
+            }
             
             val inputStream = socket.getInputStream()
             val outputStream = socket.getOutputStream()
             
-            // 交换日记索引
             exchangeDiaryIndices(inputStream, outputStream)
             
-            syncCallback?.onStatusChanged(SyncStatus.SYNCING)
+            withContext(Dispatchers.Main) {
+                syncCallback?.onStatusChanged(SyncStatus.SYNCING)
+            }
             
-            // 同步日记数据
             syncDiaryData(inputStream, outputStream)
             
-            syncCallback?.onStatusChanged(SyncStatus.COMPLETED)
-            syncCallback?.onComplete(true, "同步完成，数据已更新")
+            withContext(Dispatchers.Main) {
+                syncCallback?.onStatusChanged(SyncStatus.COMPLETED)
+                syncCallback?.onComplete(true, "同步完成，数据已更新")
+            }
         } catch (e: Exception) {
             e.printStackTrace()
-            syncCallback?.onComplete(false, "同步失败: ${e.message}")
+            withContext(Dispatchers.Main) {
+                syncCallback?.onComplete(false, "同步失败: ${e.message}")
+            }
         }
     }
 
     /**
      * 交换日记索引
      */
-    private fun exchangeDiaryIndices(inputStream: InputStream, outputStream: OutputStream) {
-        // 获取本地日记索引
+    private suspend fun exchangeDiaryIndices(inputStream: InputStream, outputStream: OutputStream) {
         val localIndices = getLocalDiaryIndices()
         
-        // 发送本地索引给对方
         val localIndicesJson = JSONArray()
         localIndices.forEach { index ->
             val obj = JSONObject()
@@ -167,7 +177,6 @@ class LinxiSyncManager(
         outputStream.write("\n".toByteArray())
         outputStream.flush()
         
-        // 接收对方的索引
         val reader = BufferedReader(InputStreamReader(inputStream))
         val receivedLine = reader.readLine()
         val receivedObj = JSONObject(receivedLine)
@@ -182,7 +191,6 @@ class LinxiSyncManager(
             ))
         }
         
-        // 比较索引，确定需要同步的日记
         indicesToReceive = determineIndicesToReceive(localIndices, remoteIndices)
         diariesToSend = determineDiariesToSend(localIndices, remoteIndices)
     }
@@ -190,19 +198,16 @@ class LinxiSyncManager(
     /**
      * 同步日记数据
      */
-    private fun syncDiaryData(inputStream: InputStream, outputStream: OutputStream) {
-        // 发送需要发送的日记
+    private suspend fun syncDiaryData(inputStream: InputStream, outputStream: OutputStream) {
         sendDiaries(outputStream, diariesToSend)
-        
-        // 接收需要接收的日记
         receiveDiaries(inputStream, indicesToReceive)
     }
     
     /**
      * 获取本地日记索引
      */
-    private fun getLocalDiaryIndices(): List<DiaryIndex> {
-        val diaries = diaryRepository.getAllDiariesRawNonSuspend()
+    private suspend fun getLocalDiaryIndices(): List<DiaryIndex> {
+        val diaries = diaryRepository.getAllDiariesRaw()
         return diaries.map { diary ->
             DiaryIndex(diary.id, diary.updateTime)
         }
@@ -219,85 +224,83 @@ class LinxiSyncManager(
     /**
      * 确定需要发送的日记
      */
-    private fun determineDiariesToSend(localIndices: List<DiaryIndex>, remoteIndices: List<DiaryIndex>): List<Diary> {
+    private suspend fun determineDiariesToSend(localIndices: List<DiaryIndex>, remoteIndices: List<DiaryIndex>): List<Diary> {
         val remoteIds = remoteIndices.map { it.id }.toSet()
-        val localDiaries = diaryRepository.getAllDiariesRawNonSuspend()
+        val localDiaries = diaryRepository.getAllDiariesRaw()
         return localDiaries.filter { !remoteIds.contains(it.id) }
     }
     
     /**
      * 发送日记
      */
-    private fun sendDiaries(outputStream: OutputStream, diaries: List<Diary>) {
-        syncCallback?.onProgress(0, diaries.size)
+    private suspend fun sendDiaries(outputStream: OutputStream, diaries: List<Diary>) {
+        withContext(Dispatchers.Main) {
+            syncCallback?.onProgress(0, diaries.size)
+        }
         
         diaries.forEachIndexed { index, diary ->
             try {
-                // 获取日记的完整信息，包括图片
-                val fullDiary = diaryRepository.getAllDiariesRawNonSuspend().find { it.id == diary.id }
-                val images: List<DiaryImage> = diaryRepository.getImagesByDiaryIdNonSuspend(diary.id)
+                val images: List<DiaryImage> = diaryRepository.getImagesByDiaryId(diary.id)
                 
-                if (fullDiary != null) {
-                    // 构造JSON对象
-                    val diaryJson = JSONObject()
-                    diaryJson.put("id", fullDiary.id)
-                    diaryJson.put("content", fullDiary.content)
-                    diaryJson.put("createTime", fullDiary.createTime)
-                    diaryJson.put("updateTime", fullDiary.updateTime)
-                    diaryJson.put("privacyLevel", fullDiary.privacyLevel)
-                    diaryJson.put("category", fullDiary.category)
-                    diaryJson.put("tags", fullDiary.tags)
+                val diaryJson = JSONObject()
+                diaryJson.put("id", diary.id)
+                diaryJson.put("content", diary.content)
+                diaryJson.put("createTime", diary.createTime)
+                diaryJson.put("updateTime", diary.updateTime)
+                diaryJson.put("privacyLevel", diary.privacyLevel)
+                diaryJson.put("category", diary.category)
+                diaryJson.put("tags", diary.tags)
+                
+                val imagesArray = JSONArray()
+                images.forEach { image ->
+                    val imageJson = JSONObject()
+                    imageJson.put("id", image.id)
+                    imageJson.put("diaryId", image.diaryId)
+                    imageJson.put("imagePath", image.imagePath)
+                    imageJson.put("originalPath", image.originalPath ?: "")
+                    imageJson.put("compressed", image.compressed)
+                    imageJson.put("compressionQuality", image.compressionQuality)
+                    imageJson.put("originalSize", image.originalSize)
+                    imageJson.put("compressedSize", image.compressedSize)
+                    imageJson.put("format", image.format)
                     
-                    // 处理图片
-                    val imagesArray = JSONArray()
-                    images.forEach { image ->
-                        val imageJson = JSONObject()
-                        imageJson.put("id", image.id)
-                        imageJson.put("diaryId", image.diaryId)
-                        imageJson.put("imagePath", image.imagePath)
-                        imageJson.put("originalPath", image.originalPath ?: "")
-                        imageJson.put("compressed", image.compressed)
-                        imageJson.put("compressionQuality", image.compressionQuality)
-                        imageJson.put("originalSize", image.originalSize)
-                        imageJson.put("compressedSize", image.compressedSize)
-                        imageJson.put("format", image.format)
-                        
-                        // 读取图片文件并转换为Base64
-                        try {
-                            val imageFile = File(image.imagePath)
-                            if (imageFile.exists()) {
-                                val bytes = imageFile.readBytes()
-                                val base64 = android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP)
-                                imageJson.put("base64Data", base64)
-                            }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
+                    try {
+                        val imageFile = File(image.imagePath)
+                        if (imageFile.exists()) {
+                            val bytes = imageFile.readBytes()
+                            val base64 = android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP)
+                            imageJson.put("base64Data", base64)
                         }
-                        
-                        imagesArray.put(imageJson)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
                     
-                    diaryJson.put("images", imagesArray)
-                    
-                    // 发送日记数据
-                    val dataToSend = diaryJson.toString()
-                    outputStream.write(dataToSend.toByteArray())
-                    outputStream.write("\n".toByteArray())
-                    outputStream.flush()
+                    imagesArray.put(imageJson)
                 }
+                
+                diaryJson.put("images", imagesArray)
+                
+                val dataToSend = diaryJson.toString()
+                outputStream.write(dataToSend.toByteArray())
+                outputStream.write("\n".toByteArray())
+                outputStream.flush()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
             
-            syncCallback?.onProgress(index + 1, diaries.size)
+            withContext(Dispatchers.Main) {
+                syncCallback?.onProgress(index + 1, diaries.size)
+            }
         }
     }
     
     /**
      * 接收日记
      */
-    private fun receiveDiaries(inputStream: InputStream, indices: List<DiaryIndex>) {
-        syncCallback?.onProgress(0, indices.size)
+    private suspend fun receiveDiaries(inputStream: InputStream, indices: List<DiaryIndex>) {
+        withContext(Dispatchers.Main) {
+            syncCallback?.onProgress(0, indices.size)
+        }
         
         val reader = BufferedReader(InputStreamReader(inputStream))
         
@@ -307,7 +310,6 @@ class LinxiSyncManager(
                 if (line != null) {
                     val diaryJson = JSONObject(line)
                     
-                    // 解析日记数据
                     val diary = Diary(
                         id = diaryJson.getString("id"),
                         content = diaryJson.getString("content"),
@@ -318,21 +320,17 @@ class LinxiSyncManager(
                         tags = diaryJson.getString("tags")
                     )
                     
-                    // 保存日记
-                    diaryRepository.addDiaryNonSuspend(diary)
+                    diaryRepository.addDiary(diary)
                     
-                    // 处理图片
                     if (diaryJson.has("images")) {
                         val imagesArray = diaryJson.getJSONArray("images")
                         for (i in 0 until imagesArray.length()) {
                             val imageJson = imagesArray.getJSONObject(i)
                             
-                            // 从Base64恢复图片
                             if (imageJson.has("base64Data")) {
                                 val base64Data = imageJson.getString("base64Data")
                                 val imageData = android.util.Base64.decode(base64Data, android.util.Base64.NO_WRAP)
                                 
-                                // 保存图片到文件
                                 val imagesDir = File(context.getExternalFilesDir(null), "images")
                                 if (!imagesDir.exists()) {
                                     imagesDir.mkdirs()
@@ -341,7 +339,6 @@ class LinxiSyncManager(
                                 val imageFile = File(imagesDir, "${imageJson.getString("id")}.${imageJson.getString("format").lowercase()}")
                                 imageFile.writeBytes(imageData)
                                 
-                                // 创建DiaryImage对象
                                 val diaryImage = DiaryImage(
                                     id = imageJson.getString("id"),
                                     diaryId = imageJson.getString("diaryId"),
@@ -355,8 +352,7 @@ class LinxiSyncManager(
                                     format = imageJson.getString("format")
                                 )
                                 
-                                // 保存图片信息
-                                diaryRepository.addImageToDiaryNonSuspend(diary.id, diaryImage)
+                                diaryRepository.addImageToDiary(diary.id, diaryImage)
                             }
                         }
                     }
@@ -365,7 +361,9 @@ class LinxiSyncManager(
                 e.printStackTrace()
             }
             
-            syncCallback?.onProgress(index + 1, indices.size)
+            withContext(Dispatchers.Main) {
+                syncCallback?.onProgress(index + 1, indices.size)
+            }
         }
     }
     
@@ -384,6 +382,7 @@ class LinxiSyncManager(
      */
     private fun cleanup() {
         isSyncActive = false
+        scope.cancel()
         
         try {
             clientSocket?.close()
