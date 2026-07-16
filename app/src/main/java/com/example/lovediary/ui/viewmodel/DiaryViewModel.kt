@@ -1,13 +1,16 @@
 package com.example.lovediary.ui.viewmodel
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.lovediary.data.entity.Diary
+import com.example.lovediary.data.entity.Highlight
 import com.example.lovediary.data.repository.DiaryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.UUID
 import java.time.LocalDateTime
@@ -43,13 +46,14 @@ class DiaryViewModel(
     private val _selectedTag = MutableStateFlow<String>("")
     val selectedTag: StateFlow<String> = _selectedTag.asStateFlow()
 
-    // 美图展示页面的描述文字
-    private val _displayDescription = MutableStateFlow<String>("")
-    val displayDescription: StateFlow<String> = _displayDescription.asStateFlow()
+    // 精选合集列表（按时间倒序，最新在前）
+    private val _highlights = MutableStateFlow<List<Highlight>>(emptyList())
+    val highlights: StateFlow<List<Highlight>> = _highlights.asStateFlow()
 
-    // 美图展示页面的图片URI
-    private val _displayImageUri = MutableStateFlow<Uri?>(null)
-    val displayImageUri: StateFlow<Uri?> = _displayImageUri.asStateFlow()
+    // 当前展示的精选（列表中最新的一条）
+    val currentHighlight: StateFlow<Highlight?> = _highlights
+        .map { it.firstOrNull() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     // 添加日记回调
     var onDiaryAdded: ((String) -> Unit)? = null
@@ -58,20 +62,46 @@ class DiaryViewModel(
         loadDiaries()
         loadCategories()
         loadTags()
+        loadHighlights()
     }
 
     /**
-     * 设置美图展示页面的描述文字
+     * 加载所有精选（合集）
      */
-    fun setDisplayDescription(description: String) {
-        _displayDescription.value = description
+    private fun loadHighlights() {
+        viewModelScope.launch {
+            diaryRepository.getAllHighlights().collect {
+                _highlights.value = it
+            }
+        }
     }
 
     /**
-     * 设置美图展示页面的图片URI
+     * 保存精选（写入合集，并成为当前展示）
+     * @param imagePath 图片本地存储路径
+     * @param title 标题
      */
-    fun setDisplayImageUri(uri: Uri?) {
-        _displayImageUri.value = uri
+    fun saveHighlight(imagePath: String, title: String) {
+        viewModelScope.launch {
+            val now = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+            val highlight = Highlight(
+                id = UUID.randomUUID().toString(),
+                imagePath = imagePath,
+                title = title,
+                createTime = now
+            )
+            diaryRepository.addHighlight(highlight)
+        }
+    }
+
+    /**
+     * 删除精选
+     * @param highlight 精选对象
+     */
+    fun deleteHighlight(highlight: Highlight) {
+        viewModelScope.launch {
+            diaryRepository.deleteHighlight(highlight)
+        }
     }
 
     /**

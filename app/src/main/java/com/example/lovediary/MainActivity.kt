@@ -38,6 +38,7 @@ import com.example.lovediary.ui.screens.AddDiaryScreen
 import com.example.lovediary.ui.screens.DiaryDetailScreen
 import com.example.lovediary.ui.screens.DisplayScreen
 import com.example.lovediary.ui.screens.EditDiaryScreen
+import com.example.lovediary.ui.screens.HighlightCollectionScreen
 import com.example.lovediary.ui.screens.HomeScreen
 import com.example.lovediary.ui.screens.LoginScreen
 import com.example.lovediary.ui.screens.LinxiSyncScreen
@@ -48,16 +49,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // 初始化数据库
-        val db = Room.databaseBuilder(
-            applicationContext,
-            DiaryDatabase::class.java,
-            "love_diary_database"
-        ).build()
+        // 初始化数据库（自动处理旧数据库迁移）
+        val db = DiaryDatabase.getDatabase(applicationContext)
         
         // 初始化DAO
         val diaryDao = db.diaryDao()
         val diaryImageDao = db.diaryImageDao()
+        val highlightDao = db.highlightDao()
         
         // 初始化隐私管理器
         val privacyManager = PrivacyManager(applicationContext)
@@ -66,6 +64,7 @@ class MainActivity : ComponentActivity() {
         val diaryRepository = DiaryRepository(
             diaryDao,
             diaryImageDao,
+            highlightDao,
             privacyManager
         )
         
@@ -135,6 +134,12 @@ fun AppNavigation(
         }
         composable("linxi_sync") {
             LinxiSyncScreen(
+                navController = navController,
+                viewModel = diaryViewModel
+            )
+        }
+        composable("highlight_collection") {
+            HighlightCollectionScreen(
                 navController = navController,
                 viewModel = diaryViewModel
             )

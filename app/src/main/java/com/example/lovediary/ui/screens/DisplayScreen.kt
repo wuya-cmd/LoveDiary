@@ -3,23 +3,29 @@ package com.example.lovediary.ui.screens
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Collections
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,117 +39,133 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.lovediary.ui.viewmodel.DiaryViewModel
-import com.example.lovediary.utils.DiaryImageHelper
+import com.example.lovediary.utils.HighlightImageHelper
+import java.io.File
 
 /**
- * 美图展示屏幕
+ * 心情精选展示屏幕
+ * 显示当前精选（一张大图+标题），支持选图、输入标题并保存为精选（写入历史合集）
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisplayScreen(
     navController: NavHostController,
     viewModel: DiaryViewModel
 ) {
-    val displayDescription by viewModel.displayDescription.collectAsState()
-    val displayImageUri by viewModel.displayImageUri.collectAsState()
+    val currentHighlight by viewModel.currentHighlight.collectAsState()
     val context = LocalContext.current
+
+    // 编辑态：用户选择的新图片预览URI 和 输入的标题
     var pendingImageUri by remember { mutableStateOf<android.net.Uri?>(null) }
-    var isSaving by remember { mutableStateOf(false) }
-    
-    // 使用Photo Picker（Android 13+无需权限）
+    var titleInput by remember { mutableStateOf("") }
+
+    // 图片选择器（Android 13+ Photo Picker，低版本回退到 GetContent，均无需权限）
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
-            viewModel.setDisplayImageUri(uri)
+            if (uri != null) pendingImageUri = uri
         }
     )
-    
-    // 设置日记添加成功后的回调，用于保存图片
-    DisposableEffect(viewModel) {
-        viewModel.onDiaryAdded = { diaryId ->
-            pendingImageUri?.let { uri ->
-                DiaryImageHelper.saveDiaryImages(
-                    context = context,
-                    viewModel = viewModel,
-                    diaryId = diaryId,
-                    imageUris = listOf(uri)
-                )
-                pendingImageUri = null
-            }
-            isSaving = false
-        }
-        
-        onDispose {
-            viewModel.onDiaryAdded = null
-        }
-    }
-    
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "记录此刻心情",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-        
-        TextField(
-            value = displayDescription,
-            onValueChange = { viewModel.setDisplayDescription(it) },
-            label = { Text("写下你的心情...") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            minLines = 3
-        )
-        
-        Button(
-            onClick = { imagePickerLauncher.launch("image/*") },
-            modifier = Modifier.padding(bottom = 16.dp)
-        ) {
-            Icon(Icons.Default.Add, contentDescription = null)
-            Text("选择图片")
-        }
-        
-        displayImageUri?.let { uri ->
-            AsyncImage(
-                model = uri,
-                contentDescription = "选中的图片",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .padding(bottom = 16.dp),
-                contentScale = ContentScale.Crop
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("心情精选") },
+                actions = {
+                    IconButton(onClick = { navController.navigate("highlight_collection") }) {
+                        Icon(Icons.Default.Collections, contentDescription = "查看合集")
+                    }
+                }
             )
         }
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        Button(
-            onClick = {
-                if (displayDescription.isNotBlank()) {
-                    isSaving = true
-                    pendingImageUri = displayImageUri
-                    viewModel.addDiary(
-                        content = displayDescription,
-                        privacyLevel = com.example.lovediary.security.PrivacyLevels.PUBLIC
-                    )
-                    // 清除状态
-                    viewModel.setDisplayDescription("")
-                    viewModel.setDisplayImageUri(null)
-                    isSaving = false
-                    Toast.makeText(context, "心情已保存", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(context, "请输入内容", Toast.LENGTH_SHORT).show()
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !isSaving && displayDescription.isNotBlank()
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("保存心情")
+            // 大图展示区：优先显示用户刚选的预览图，其次显示当前精选
+            val imageModel: Any? = pendingImageUri
+                ?: currentHighlight?.let { File(it.imagePath) }
+
+            if (imageModel != null) {
+                AsyncImage(
+                    model = imageModel,
+                    contentDescription = "精选图片",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(360.dp),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                // 空状态
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(360.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "还没有精选图片\n点击下方按钮添加",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 标题输入
+            OutlinedTextField(
+                value = titleInput,
+                onValueChange = { titleInput = it },
+                label = { Text("标题") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // 选择图片按钮
+            Button(
+                onClick = { imagePickerLauncher.launch("image/*") },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(Icons.Default.Add, contentDescription = null)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(if (pendingImageUri == null) "选择图片" else "重新选择")
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // 保存为精选按钮
+            Button(
+                onClick = {
+                    val uri = pendingImageUri
+                    if (uri != null && titleInput.isNotBlank()) {
+                        // 压缩保存图片到本地，得到持久化路径
+                        val savedPath = HighlightImageHelper.saveHighlightImage(context, uri)
+                        if (savedPath != null) {
+                            viewModel.saveHighlight(savedPath, titleInput.trim())
+                            // 清空编辑态
+                            pendingImageUri = null
+                            titleInput = ""
+                            Toast.makeText(context, "已保存到精选合集", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, "图片保存失败", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(context, "请选择图片并输入标题", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = pendingImageUri != null && titleInput.isNotBlank()
+            ) {
+                Text("保存精选")
+            }
         }
     }
 }

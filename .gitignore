@@ -1,0 +1,25 @@
+# Build directories
+build/
+app/build/
+
+# Gradle
+.gradle/
+gradlew
+gradlew.bat
+gradle/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Android
+local.properties
+*.apk
+*.aab
+*.dex
+
+# OS
+.DS_Store
+Thumbs.db

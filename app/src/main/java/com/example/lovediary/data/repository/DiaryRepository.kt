@@ -2,8 +2,10 @@ package com.example.lovediary.data.repository
 
 import com.example.lovediary.data.dao.DiaryDao
 import com.example.lovediary.data.dao.DiaryImageDao
+import com.example.lovediary.data.dao.HighlightDao
 import com.example.lovediary.data.entity.Diary
 import com.example.lovediary.data.entity.DiaryImage
+import com.example.lovediary.data.entity.Highlight
 import com.example.lovediary.security.PrivacyManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -11,11 +13,12 @@ import kotlinx.coroutines.flow.map
 
 /**
  * 日记仓库类
- * 统一管理日记和图片的数据访问操作
+ * 统一管理日记、图片和精选的数据访问操作
  */
 class DiaryRepository(
     private val diaryDao: DiaryDao,
     private val diaryImageDao: DiaryImageDao,
+    private val highlightDao: HighlightDao,
     private val privacyManager: PrivacyManager
 ) {
     /**
@@ -158,5 +161,44 @@ class DiaryRepository(
 
     // 公共访问器，允许外部访问隐私管理器
     val privacyManagerPublic: PrivacyManager get() = privacyManager
-    
+
+    /**
+     * 获取所有精选，按创建时间倒序排列
+     */
+    fun getAllHighlights(): Flow<List<Highlight>> {
+        return highlightDao.getAllHighlights()
+    }
+
+    /**
+     * 添加精选
+     * @param highlight 精选对象
+     * @return 添加后的精选ID
+     */
+    suspend fun addHighlight(highlight: Highlight): String {
+        highlightDao.insertHighlight(highlight)
+        return highlight.id
+    }
+
+    /**
+     * 根据ID获取精选
+     */
+    suspend fun getHighlightById(id: String): Highlight? {
+        return highlightDao.getHighlightById(id)
+    }
+
+    /**
+     * 获取所有精选（原始数据，无隐私过滤，用于导出）
+     */
+    suspend fun getAllHighlightsRaw(): List<Highlight> {
+        return highlightDao.getAllHighlights().first()
+    }
+
+    /**
+     * 删除精选
+     * @param highlight 精选对象
+     */
+    suspend fun deleteHighlight(highlight: Highlight) {
+        highlightDao.deleteHighlight(highlight)
+    }
+
 }

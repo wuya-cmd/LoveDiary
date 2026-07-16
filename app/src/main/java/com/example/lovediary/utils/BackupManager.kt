@@ -9,6 +9,7 @@ import android.util.Base64
 import android.util.Log
 import com.example.lovediary.data.entity.Diary
 import com.example.lovediary.data.entity.DiaryImage
+import com.example.lovediary.data.entity.Highlight
 import com.example.lovediary.data.repository.DiaryRepository
 import com.example.lovediary.security.PrivacyLevels
 import com.fasterxml.jackson.core.JsonFactory
@@ -60,34 +61,25 @@ class BackupManager(
     suspend fun exportDiaries(config: BackupConfig = BackupConfig()): String {
         return withContext(Dispatchers.IO) {
             try {
-                // 获取所有日记（原始数据，不带隐私过滤）
                 val diaries = diaryRepository.getAllDiariesRaw()
-                
-                // 获取相识日期
                 val sharedPreferences = context.getSharedPreferences("love_diary_prefs", Context.MODE_PRIVATE)
                 val anniversaryDate = sharedPreferences.getString(START_DATE_KEY, null)
                 
-                // 创建输出文件
-                val outputFile = createBackupFile()
+                val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                val outputFile = createBackupFile(timestamp)
                 val outputStream = FileOutputStream(outputFile)
                 
-                // 流式写入JSON，避免OOM
                 outputStream.write("{".toByteArray())
-                
-                // 写入元数据
                 outputStream.write("\"version\":\"1.2\",".toByteArray())
                 outputStream.write("\"exportTime\":\"${Date().toISOString()}\",".toByteArray())
                 outputStream.write("\"totalCount\":${diaries.size},".toByteArray())
                 
-                // 添加相识日期
                 if (anniversaryDate != null) {
                     outputStream.write("\"$START_DATE_KEY\":\"$anniversaryDate\",".toByteArray())
                 }
                 
-                // 写入日记数组开始
                 outputStream.write("\"diaries\":[".toByteArray())
                 
-                // 逐个处理日记并写入
                 for ((index, diary) in diaries.withIndex()) {
                     if (index > 0) {
                         outputStream.write(",".toByteArray())
@@ -102,16 +94,14 @@ class BackupManager(
                     outputStream.write("\"category\":\"${escapeJsonString(diary.category)}\",".toByteArray())
                     outputStream.write("\"tags\":\"${escapeJsonString(diary.tags)}\",".toByteArray())
                     
-                    // 处理图片
                     outputStream.write("\"images\":[".toByteArray())
                     if (config.includeImages) {
                         val images = diaryRepository.getImagesByDiaryId(diary.id)
                         for ((imgIndex, image) in images.withIndex()) {
                             try {
-                                // 检查文件大小，避免过大文件导致OOM
                                 val imageFile = File(image.imagePath)
                                 val fileSize = imageFile.length()
-                                val maxSize = 10 * 1024 * 1024 // 10MB限制
+                                val maxSize = 10 * 1024 * 1024
                                 
                                 if (fileSize > maxSize) {
                                     Log.w("BackupManager", "Image file too large to export: ${image.imagePath} ($fileSize bytes)")
@@ -131,7 +121,6 @@ class BackupManager(
                                 outputStream.write("\"compressedSize\":${image.compressedSize},".toByteArray())
                                 outputStream.write("\"format\":\"${escapeJsonString(image.format)}\",".toByteArray())
                                 
-                                // 将图片转换为Base64
                                 val base64Data = convertImageToBase64(image.imagePath)
                                 if (base64Data.isNotEmpty()) {
                                     outputStream.write("\"base64Data\":\"${escapeJsonString(base64Data)}\"".toByteArray())
@@ -139,25 +128,23 @@ class BackupManager(
                                 outputStream.write("}".toByteArray())
                             } catch (e: OutOfMemoryError) {
                                 Log.e("BackupManager", "Out of memory when processing image: ${image.imagePath}", e)
-                                // Continue with other images
                             } catch (e: Exception) {
                                 Log.e("BackupManager", "Error processing image: ${e.message}", e)
-                                // Continue with other images
                             }
                         }
                     }
-                    outputStream.write("]".toByteArray()) // 结束images数组
+                    outputStream.write("]".toByteArray())
                     
-                    outputStream.write("}".toByteArray()) // 结束diary对象
+                    outputStream.write("}".toByteArray())
                 }
                 
-                outputStream.write("]}".toByteArray()) // 结束diaries数组和根对象
-                
+                outputStream.write("]}".toByteArray())
                 outputStream.flush()
                 outputStream.close()
                 
-                // 保存到 Downloads 目录
                 val publicPath = saveToDownloads(outputFile, outputFile.name)
+                
+                exportHighlights(timestamp)
                 
                 return@withContext publicPath.ifEmpty { outputFile.absolutePath }
             } catch (e: OutOfMemoryError) {
@@ -168,6 +155,203 @@ class BackupManager(
                 throw e
             }
         }
+    }
+
+    /**
+     * 导出精选合集为JSON文件
+     * @param timestamp 时间戳（与日记备份保持一致）
+     * @return 导出的文件路径
+     */
+    suspend fun exportHighlights(timestamp: String): String {
+        return withContext(Dispatchers.IO) {
+            try {
+                val highlights = diaryRepository.getAllHighlightsRaw()
+                if (highlights.isEmpty()) {
+                    Log.d("BackupManager", "没有精选数据需要导出")
+                    return@withContext ""
+                }
+
+                val fileName = "highlight_backup_${timestamp}.json"
+                val outputFile = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    File(context.cacheDir, fileName)
+                } else {
+                    val outputDir = File(context.getExternalFilesDir(null), "backups")
+                    if (!outputDir.exists()) outputDir.mkdirs()
+                    File(outputDir, fileName)
+                }
+
+                val outputStream = FileOutputStream(outputFile)
+                outputStream.write("{".toByteArray())
+                outputStream.write("\"version\":\"1.0\",".toByteArray())
+                outputStream.write("\"exportTime\":\"${Date().toISOString()}\",".toByteArray())
+                outputStream.write("\"totalCount\":${highlights.size},".toByteArray())
+                outputStream.write("\"highlights\":[".toByteArray())
+
+                for ((index, highlight) in highlights.withIndex()) {
+                    if (index > 0) outputStream.write(",".toByteArray())
+
+                    outputStream.write("{".toByteArray())
+                    outputStream.write("\"id\":\"${highlight.id}\",".toByteArray())
+                    outputStream.write("\"title\":\"${escapeJsonString(highlight.title)}\",".toByteArray())
+                    outputStream.write("\"createTime\":\"${highlight.createTime}\",".toByteArray())
+
+                    outputStream.write("\"image\":{".toByteArray())
+                    val imageFile = File(highlight.imagePath)
+                    if (imageFile.exists()) {
+                        val fileSize = imageFile.length()
+                        val maxSize = 10 * 1024 * 1024
+                        if (fileSize <= maxSize) {
+                            outputStream.write("\"fileName\":\"${imageFile.name}\",".toByteArray())
+                            val base64Data = convertImageToBase64(highlight.imagePath)
+                            if (base64Data.isNotEmpty()) {
+                                outputStream.write("\"base64Data\":\"${escapeJsonString(base64Data)}\"".toByteArray())
+                            }
+                        } else {
+                            Log.w("BackupManager", "Highlight image too large: ${highlight.imagePath}")
+                        }
+                    }
+                    outputStream.write("}".toByteArray())
+
+                    outputStream.write("}".toByteArray())
+                }
+
+                outputStream.write("]}".toByteArray())
+                outputStream.flush()
+                outputStream.close()
+
+                val publicPath = saveToDownloads(outputFile, fileName)
+                return@withContext publicPath.ifEmpty { outputFile.absolutePath }
+            } catch (e: Exception) {
+                Log.e("BackupManager", "导出精选时发生错误", e)
+                throw e
+            }
+        }
+    }
+
+    /**
+     * 从JSON文件导入精选合集
+     * @param filePath JSON文件路径
+     * @return 导入结果
+     */
+    suspend fun importHighlights(filePath: String): ImportResult {
+        return withContext(Dispatchers.IO) {
+            var successCount = 0
+            var failedCount = 0
+            var imageCount = 0
+
+            try {
+                val jsonFactory = JsonFactory()
+                val file = File(filePath)
+                if (!file.exists()) {
+                    Log.d("BackupManager", "精选文件不存在: $filePath")
+                    return@withContext ImportResult(0, 0, 0, 0)
+                }
+
+                FileInputStream(file).use { fis ->
+                    val parser = jsonFactory.createParser(fis)
+                    if (parser.nextToken() != JsonToken.START_OBJECT) {
+                        throw IllegalStateException("Expected start of object")
+                    }
+
+                    while (parser.nextToken() != JsonToken.END_OBJECT) {
+                        val fieldName = parser.currentName()
+                        parser.nextToken()
+
+                        if (fieldName == "highlights" && parser.currentToken() == JsonToken.START_ARRAY) {
+                            while (parser.nextToken() != JsonToken.END_ARRAY) {
+                                if (parser.currentToken() == JsonToken.START_OBJECT) {
+                                    try {
+                                        val highlight = parseHighlightObject(parser)
+                                        if (highlight != null) {
+                                            val existing = diaryRepository.getHighlightById(highlight.id)
+                                            if (existing == null) {
+                                                diaryRepository.addHighlight(highlight)
+                                                successCount++
+                                                imageCount++
+                                            }
+                                        }
+                                    } catch (e: Exception) {
+                                        Log.e("BackupManager", "Error processing highlight: ${e.message}", e)
+                                        failedCount++
+                                    }
+                                }
+                            }
+                        } else {
+                            parser.skipChildren()
+                        }
+                    }
+                }
+
+                Log.d("BackupManager", "精选导入完成: Success=$successCount, Failed=$failedCount")
+            } catch (e: Exception) {
+                Log.e("BackupManager", "导入精选时发生错误", e)
+            }
+
+            return@withContext ImportResult(successCount, failedCount, successCount + failedCount, imageCount)
+        }
+    }
+
+    /**
+     * 解析单个精选对象
+     */
+    private fun parseHighlightObject(parser: JsonParser): Highlight? {
+        var id: String? = null
+        var title: String? = null
+        var createTime: String? = null
+        var imagePath: String? = null
+        var tempFileName: String? = null
+        var tempBase64Data: String? = null
+
+        while (parser.nextToken() != JsonToken.END_OBJECT) {
+            val fieldName = parser.currentName()
+            parser.nextToken()
+
+            when (fieldName) {
+                "id" -> id = parser.valueAsString
+                "title" -> title = parser.valueAsString
+                "createTime" -> createTime = parser.valueAsString
+                "image" -> {
+                    if (parser.currentToken() == JsonToken.START_OBJECT) {
+                        while (parser.nextToken() != JsonToken.END_OBJECT) {
+                            val imgField = parser.currentName()
+                            parser.nextToken()
+                            when (imgField) {
+                                "fileName" -> tempFileName = parser.valueAsString
+                                "base64Data" -> tempBase64Data = parser.valueAsString
+                                else -> {}
+                            }
+                        }
+                        if (tempBase64Data != null && tempBase64Data!!.isNotEmpty()) {
+                            imagePath = convertBase64ToImage(tempBase64Data!!, tempFileName ?: "highlight.jpg")
+                        }
+                    }
+                }
+                else -> parser.skipChildren()
+            }
+        }
+
+        if (id != null && title != null && createTime != null && imagePath != null) {
+            return Highlight(id, imagePath, title, createTime)
+        }
+        return null
+    }
+
+    /**
+     * 从日记备份文件路径提取同目录的精选备份文件路径
+     * @param diaryFilePath 日记备份文件路径
+     * @return 精选备份文件路径，不存在则返回空字符串
+     */
+    private fun extractHighlightFilePath(diaryFilePath: String): String {
+        val file = File(diaryFilePath)
+        val parentDir = file.parent ?: return ""
+        val fileName = file.name
+        
+        if (fileName.startsWith("diary_backup_") && fileName.endsWith(".json")) {
+            val timestamp = fileName.substring("diary_backup_".length, fileName.length - ".json".length)
+            return File(parentDir, "highlight_backup_${timestamp}.json").absolutePath
+        }
+        
+        return ""
     }
 
     /**
@@ -185,7 +369,6 @@ class BackupManager(
             var totalCount = 0
             
             try {
-                // 使用Jackson进行流式JSON解析
                 val jsonFactory = JsonFactory()
                 val file = File(filePath)
                 Log.d("BackupManager", "File size: ${file.length()} bytes")
@@ -193,15 +376,13 @@ class BackupManager(
                 FileInputStream(file).use { fis ->
                     val parser = jsonFactory.createParser(fis)
                     
-                    // 确保我们从对象开始解析
                     if (parser.nextToken() != JsonToken.START_OBJECT) {
                         throw IllegalStateException("Expected start of object")
                     }
                     
-                    // 解析顶层字段
                     while (parser.nextToken() != JsonToken.END_OBJECT) {
                         val fieldName = parser.currentName()
-                        parser.nextToken() // 移动到字段值
+                        parser.nextToken()
                         
                         when (fieldName) {
                             START_DATE_KEY -> {
@@ -222,7 +403,6 @@ class BackupManager(
                                 }
                             }
                             else -> {
-                                // 跳过其他字段
                                 parser.skipChildren()
                             }
                         }
@@ -230,6 +410,12 @@ class BackupManager(
                 }
                 
                 Log.d("BackupManager", "Streaming import completed. Success: $successCount, Failed: $failedCount, Total: $totalCount, Images: $imageCount")
+                
+                val highlightFilePath = extractHighlightFilePath(filePath)
+                if (highlightFilePath.isNotEmpty() && File(highlightFilePath).exists()) {
+                    val highlightResult = importHighlights(highlightFilePath)
+                    Log.d("BackupManager", "自动导入精选: ${highlightResult.successCount} 条")
+                }
             } catch (e: OutOfMemoryError) {
                 Log.e("BackupManager", "Out of memory during streaming import", e)
                 throw e
@@ -647,22 +833,14 @@ class BackupManager(
         return outputFile.absolutePath
     }
 
-    /**
-     * 创建备份文件
-     * @return 备份文件
-     */
-    private fun createBackupFile(): File {
-        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+    private fun createBackupFile(timestamp: String): File {
         val fileName = "diary_backup_${timestamp}.json"
         
-        // 对于 Android 10 及以上版本，使用 MediaStore API
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // 直接创建临时文件用于写入，后续通过 saveToDownloads 保存到公共目录
             val tempFile = File(context.cacheDir, fileName)
             return tempFile
         }
         
-        // 对于较低版本的 Android 使用传统方法
         val outputDir = File(context.getExternalFilesDir(null), "backups")
         if (!outputDir.exists()) {
             outputDir.mkdirs()
